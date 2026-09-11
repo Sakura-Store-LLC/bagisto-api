@@ -10,7 +10,25 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Utils\BuildSchema;
 
-require_once __DIR__.'/../../../../../vendor/autoload.php';
+// Runs both from a host project (packages/Webkul/BagistoApi/...) and from the package
+// repository, where the package itself is the root.
+$autoload = null;
+
+foreach (['/../../../../../vendor/autoload.php', '/../../vendor/autoload.php'] as $candidate) {
+    if (file_exists(__DIR__.$candidate)) {
+        $autoload = __DIR__.$candidate;
+
+        break;
+    }
+}
+
+if ($autoload === null) {
+    fwrite(STDERR, "Could not locate vendor/autoload.php. Run composer install first.\n");
+
+    exit(1);
+}
+
+require_once $autoload;
 
 final class CollectionBuilder
 {

@@ -114,3 +114,41 @@ jobs:
 
           print('Collections and environments valid.')
           PY
+
+  generated:
+    runs-on: ubuntu-22.04
+
+    name: Collections match the exported schema
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Rebuild and compare
+        run: |
+          # The collections are generated from schema/generated, so a commit that edits one
+          # by hand — or that exports a new schema without rebuilding — would publish a
+          # collection the API no longer matches.
+          mkdir -p /tmp/collections
+
+          php schema/tools/build-collection.php /tmp/collections
+
+          status=0
+
+          for file in collections/*.postman_collection.json; do
+            if ! diff -q "$file" "/tmp/${file}" > /dev/null; then
+              echo "::error file=$file::Out of date. Run: php schema/tools/build-collection.php"
+              status=1
+            fi
+          done
+
+          exit $status

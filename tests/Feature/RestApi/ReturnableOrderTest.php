@@ -177,8 +177,13 @@ class ReturnableOrderTest extends RestApiTestCase
     {
         $this->seedRequiredData();
         $customer = $this->createCustomer();
-        $wanted = $this->seedEligibleOrder($customer);
-        $other = $this->seedEligibleOrder($customer);
+        /**
+         * The filter matches a partial order number, as the storefront datagrid does, so
+         * the two orders need numbers where neither contains the other — sequential ids
+         * such as 1 and 10 would both match a search for "1".
+         */
+        $wanted = $this->seedEligibleOrder($customer, ['increment_id' => 'RMA-WANTED-'.uniqid()]);
+        $other = $this->seedEligibleOrder($customer, ['increment_id' => 'RMA-OTHER-'.uniqid()]);
 
         $response = $this->authenticatedGet($customer, $this->url.'?increment_id='.$wanted->increment_id);
 

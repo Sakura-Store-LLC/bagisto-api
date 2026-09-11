@@ -149,8 +149,9 @@ class ReturnableOrderTest extends GraphQLTestCase
     {
         $this->seedRequiredData();
         $customer = $this->createCustomer();
-        $wanted = $this->seedEligibleOrder($customer);
-        $other = $this->seedEligibleOrder($customer);
+
+        $wanted = $this->seedEligibleOrder($customer, ['increment_id' => 'RMA-WANTED-'.uniqid()]);
+        $other = $this->seedEligibleOrder($customer, ['increment_id' => 'RMA-OTHER-'.uniqid()]);
 
         $query = <<<'GQL'
             query ($incrementId: String) {

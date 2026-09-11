@@ -18,7 +18,6 @@ use Webkul\BagistoApi\Models\Customer;
 
 class NullableToOnePropertyMetadataFactory implements PropertyMetadataFactoryInterface
 {
-
     private array $nullableRelations = [
         Customer::class => ['status', 'is_verified', 'is_suspended', 'subscribed_to_news_letter'],
         AdminCustomer::class => ['group'],

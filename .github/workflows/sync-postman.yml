@@ -13,7 +13,43 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  configured:
+    runs-on: ubuntu-22.04
+
+    name: Check Postman credentials
+
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+
+    steps:
+      - name: Check
+        id: check
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          POSTMAN_SHOP_COLLECTION_ID: ${{ secrets.POSTMAN_SHOP_COLLECTION_ID }}
+          POSTMAN_ADMIN_COLLECTION_ID: ${{ secrets.POSTMAN_ADMIN_COLLECTION_ID }}
+          POSTMAN_ENVIRONMENT_ID: ${{ secrets.POSTMAN_ENVIRONMENT_ID }}
+        run: |
+          missing=
+          for name in POSTMAN_API_KEY POSTMAN_SHOP_COLLECTION_ID POSTMAN_ADMIN_COLLECTION_ID POSTMAN_ENVIRONMENT_ID; do
+            if [ -z "${!name}" ]; then
+              missing="$missing $name"
+            fi
+          done
+
+          if [ -n "$missing" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Postman publishing is not configured, so nothing is pushed. Add these repository secrets to enable it:$missing"
+            exit 0
+          fi
+
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
   sync:
+    needs: configured
+
+    if: needs.configured.outputs.ready == 'true'
+
     runs-on: ubuntu-22.04
 
     name: Pull collections and environments back into the repo
