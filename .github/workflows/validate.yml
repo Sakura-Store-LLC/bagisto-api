@@ -131,7 +131,8 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-progress --prefer-dist
+        # Only the autoloader is needed; the package ships no application to boot.
+        run: composer install --no-interaction --no-progress --prefer-dist --no-scripts
 
       - name: Rebuild and compare
         run: |
