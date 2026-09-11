@@ -23,6 +23,7 @@ use Webkul\BagistoApi\Exception\AuthenticationException;
 use Webkul\BagistoApi\Exception\AuthorizationException;
 use Webkul\BagistoApi\Exception\InvalidInputException;
 use Webkul\BagistoApi\Exception\ResourceNotFoundException;
+use Webkul\BagistoApi\Support\CoreCapabilities;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductImage;
 use Webkul\Product\Repositories\ProductImageRepository;
@@ -448,6 +449,12 @@ class AdminCatalogProductImageProcessor implements ProcessorInterface
      */
     protected function saveAltText(int $imageId, string $altText): void
     {
+        // BACKWARD COMPATIBILITY: the translation table arrived in 2.4.10. Remove when the
+        // minimum supported core is 2.4.10.
+        if (! app(CoreCapabilities::class)->hasProductImageAltText()) {
+            return;
+        }
+
         foreach (core()->getRequestedLocaleCodes() as $localeCode) {
             DB::table('product_image_translations')->updateOrInsert(
                 ['product_image_id' => $imageId, 'locale' => $localeCode],
@@ -461,6 +468,11 @@ class AdminCatalogProductImageProcessor implements ProcessorInterface
      */
     protected function altTextFor(int $imageId): ?string
     {
+        // BACKWARD COMPATIBILITY: remove when the minimum supported core is 2.4.10.
+        if (! app(CoreCapabilities::class)->hasProductImageAltText()) {
+            return null;
+        }
+
         return DB::table('product_image_translations')
             ->where('product_image_id', $imageId)
             ->where('locale', app()->getLocale())

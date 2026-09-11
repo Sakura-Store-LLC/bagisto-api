@@ -284,6 +284,12 @@ use Webkul\BagistoApi\Admin\State\AdminSettingsTaxRateExportProvider;
 use Webkul\BagistoApi\Admin\State\AdminSettingsTaxRateItemProvider;
 use Webkul\BagistoApi\Admin\State\AdminSettingsTaxRateProcessor;
 use Webkul\BagistoApi\Admin\State\AdminSettingsTaxRateWriteProvider;
+use Webkul\BagistoApi\Admin\State\AdminSettingsThemeCollectionProvider;
+use Webkul\BagistoApi\Admin\State\AdminSettingsThemeItemProvider;
+use Webkul\BagistoApi\Admin\State\AdminSettingsThemeMassDeleteProcessor;
+use Webkul\BagistoApi\Admin\State\AdminSettingsThemeMassUpdateStatusProcessor;
+use Webkul\BagistoApi\Admin\State\AdminSettingsThemeProcessor;
+use Webkul\BagistoApi\Admin\State\AdminSettingsThemeWriteProvider;
 use Webkul\BagistoApi\Admin\State\AdminSettingsUserCollectionProvider;
 use Webkul\BagistoApi\Admin\State\AdminSettingsUserDeleteSelfProcessor;
 use Webkul\BagistoApi\Admin\State\AdminSettingsUserItemProvider;
@@ -381,6 +387,7 @@ use Webkul\BagistoApi\State\VerifyTokenProcessor;
 use Webkul\BagistoApi\State\WishlistItemProvider;
 use Webkul\BagistoApi\State\WishlistProcessor;
 use Webkul\BagistoApi\State\WishlistProvider;
+use Webkul\BagistoApi\Support\CoreCapabilities;
 
 class ApiStateBindingsServiceProvider extends ServiceProvider
 {
@@ -481,25 +488,40 @@ class ApiStateBindingsServiceProvider extends ServiceProvider
         $this->app->tag(AdminProductProvider::class, ProviderInterface::class);
         $this->app->tag(AdminCatalogProductCollectionProvider::class, ProviderInterface::class);
         $this->app->tag(AdminCatalogProductDetailProvider::class, ProviderInterface::class);
-        // Appearance → Themes + Sections
-        $this->app->tag(ThemeProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminAppearanceThemeCollectionProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminAppearanceThemeItemProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminAppearanceThemeImpactProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminAppearanceSectionCollectionProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminAppearanceSectionItemProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminAppearanceSectionWriteProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminAppearanceSectionFieldsProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminAppearanceSectionPreviewProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminAppearanceThemeActivateProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminAppearanceSectionProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminAppearanceSectionDraftProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminAppearanceSectionStatusProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminAppearanceSectionReorderProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminAppearanceSectionDuplicateProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminAppearanceSectionPublishProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminAppearanceSectionDiscardProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminAppearanceSectionMediaProcessor::class, ProcessorInterface::class);
+        // Appearance → Themes + Sections on core 2.4.10+, else Settings → Themes. Only one
+        // era may be tagged: the bridge instantiates every tagged class on the first /api
+        // request, so a constructor asking for a repository this core lacks is a fatal on
+        // every endpoint.
+        //
+        // BACKWARD COMPATIBILITY: drop the else arm, the condition and the legacy
+        // AdminSettingsTheme* classes when the minimum supported core is 2.4.10.
+        if (app(CoreCapabilities::class)->hasAppearanceSections()) {
+            $this->app->tag(ThemeProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceThemeCollectionProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceThemeItemProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceThemeImpactProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceSectionCollectionProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceSectionItemProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceSectionWriteProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceSectionFieldsProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceSectionPreviewProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceThemeActivateProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionDraftProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionStatusProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionReorderProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionDuplicateProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionPublishProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionDiscardProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionMediaProcessor::class, ProcessorInterface::class);
+        } else {
+            $this->app->tag(AdminSettingsThemeCollectionProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminSettingsThemeItemProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminSettingsThemeWriteProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminSettingsThemeProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminSettingsThemeMassDeleteProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminSettingsThemeMassUpdateStatusProcessor::class, ProcessorInterface::class);
+        }
 
         $this->app->tag(AdminAttributeCollectionProvider::class, ProviderInterface::class);
         $this->app->tag(AdminAttributeItemProvider::class, ProviderInterface::class);

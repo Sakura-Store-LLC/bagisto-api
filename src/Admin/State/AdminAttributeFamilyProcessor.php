@@ -21,6 +21,7 @@ use Webkul\BagistoApi\Exception\AuthenticationException;
 use Webkul\BagistoApi\Exception\AuthorizationException;
 use Webkul\BagistoApi\Exception\InvalidInputException;
 use Webkul\BagistoApi\Exception\ResourceNotFoundException;
+use Webkul\BagistoApi\Support\CoreCapabilities;
 use Webkul\Core\Rules\Code;
 
 /**
@@ -40,6 +41,7 @@ class AdminAttributeFamilyProcessor implements ProcessorInterface
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected AdminAttributeFamilyItemProvider $itemProvider,
+        protected CoreCapabilities $capabilities,
     ) {}
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
@@ -139,9 +141,19 @@ class AdminAttributeFamilyProcessor implements ProcessorInterface
 
         // The default family backs every product form, so core refuses to remove it — the
         // count of remaining families is not what protects the store.
-        if ($family->code === AttributeFamily::DEFAULT_CODE) {
+        //
+        // BACKWARD COMPATIBILITY: a core before 2.4.10 protects the last family instead.
+        // Drop the else arm when the minimum supported core is 2.4.10.
+        if ($this->capabilities->hasDefaultAttributeFamilyCode()) {
+            if ($family->code === AttributeFamily::DEFAULT_CODE) {
+                throw new InvalidInputException(
+                    __('bagistoapi::app.admin.family.default-delete-error'),
+                    400,
+                );
+            }
+        } elseif (AttributeFamily::count() <= 1) {
             throw new InvalidInputException(
-                __('bagistoapi::app.admin.family.default-delete-error'),
+                __('bagistoapi::app.admin.family.last-delete-error'),
                 400,
             );
         }

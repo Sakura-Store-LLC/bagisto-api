@@ -197,6 +197,9 @@ class SchemaExportTest extends BagistoApiTest
 
     public function test_exported_graphql_matches_the_running_schema(): void
     {
+        // BACKWARD COMPATIBILITY: remove when the minimum supported core is 2.4.10.
+        $this->skipUnlessCoreSupports($this->core()->hasAppearanceSections(), 'The storefront Theme type');
+
         $sdl = (string) file_get_contents(self::$exportPath.'/shop.graphql');
 
         preg_match('/^type Theme implements Node \{(.*?)^\}/ms', $sdl, $matches);

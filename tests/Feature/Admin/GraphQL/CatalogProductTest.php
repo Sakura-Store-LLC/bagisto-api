@@ -456,6 +456,12 @@ class CatalogProductTest extends AdminApiTestCase
 
     protected function refreshFlatDerived(int $productId): void
     {
+        // BACKWARD COMPATIBILITY: product_flat gained these columns in 2.4.10; an older
+        // core has the listing compute them. Remove when the minimum core is 2.4.10.
+        if (! $this->core()->hasProductFlatDerivedColumns()) {
+            return;
+        }
+
         app(Flat::class)->refreshDerivedColumns([$productId]);
     }
 

@@ -10,6 +10,14 @@ use Webkul\Theme\Models\Section;
  */
 class ThemeTest extends GraphQLTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // BACKWARD COMPATIBILITY: remove when the minimum supported core is 2.4.10.
+        $this->skipUnlessCoreSupports($this->core()->hasAppearanceSections(), 'Appearance sections');
+    }
+
     private function query(): string
     {
         return <<<'GQL'

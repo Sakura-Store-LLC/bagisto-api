@@ -18,6 +18,7 @@ use Webkul\BagistoApi\Exception\AuthenticationException;
 use Webkul\BagistoApi\Exception\AuthorizationException;
 use Webkul\BagistoApi\Exception\InvalidInputException;
 use Webkul\BagistoApi\Exception\ResourceNotFoundException;
+use Webkul\BagistoApi\Support\CoreCapabilities;
 use Webkul\Marketing\Models\Template;
 use Webkul\Marketing\Repositories\TemplateRepository;
 
@@ -31,6 +32,7 @@ class AdminMarketingTemplateProcessor implements ProcessorInterface
     public function __construct(
         protected TemplateRepository $templateRepository,
         protected AdminMarketingTemplateItemProvider $itemProvider,
+        protected CoreCapabilities $capabilities,
     ) {}
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
@@ -116,7 +118,9 @@ class AdminMarketingTemplateProcessor implements ProcessorInterface
             throw new ResourceNotFoundException(__('bagistoapi::app.admin.marketing.template.not-found'));
         }
 
-        if ($template->campaigns()->count()) {
+        // BACKWARD COMPATIBILITY: core exposes the relation from 2.4.10. Drop the guard
+        // on the capability when the minimum supported core is 2.4.10.
+        if ($this->capabilities->hasCampaignRelations() && $template->campaigns()->count()) {
             throw new InvalidInputException(
                 __('bagistoapi::app.admin.marketing.template.campaign-associated'),
                 400,

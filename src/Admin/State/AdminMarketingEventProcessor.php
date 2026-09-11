@@ -18,6 +18,7 @@ use Webkul\BagistoApi\Exception\AuthenticationException;
 use Webkul\BagistoApi\Exception\AuthorizationException;
 use Webkul\BagistoApi\Exception\InvalidInputException;
 use Webkul\BagistoApi\Exception\ResourceNotFoundException;
+use Webkul\BagistoApi\Support\CoreCapabilities;
 use Webkul\Marketing\Models\Event as EventModel;
 use Webkul\Marketing\Repositories\EventRepository;
 
@@ -43,6 +44,7 @@ class AdminMarketingEventProcessor implements ProcessorInterface
     public function __construct(
         protected EventRepository $eventRepository,
         protected AdminMarketingEventItemProvider $itemProvider,
+        protected CoreCapabilities $capabilities,
     ) {}
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
@@ -138,7 +140,9 @@ class AdminMarketingEventProcessor implements ProcessorInterface
 
         // A campaign is scheduled against this event, so removing it would leave that
         // campaign with nothing to fire on.
-        if ($event->campaigns()->count()) {
+        // BACKWARD COMPATIBILITY: core exposes the relation from 2.4.10. Drop the guard
+        // on the capability when the minimum supported core is 2.4.10.
+        if ($this->capabilities->hasCampaignRelations() && $event->campaigns()->count()) {
             throw new InvalidInputException(
                 __('bagistoapi::app.admin.marketing.event.campaign-associated'),
                 400,

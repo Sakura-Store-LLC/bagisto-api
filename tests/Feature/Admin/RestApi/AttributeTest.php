@@ -696,6 +696,9 @@ class AttributeTest extends AdminApiTestCase
 
     public function test_create_attribute_rejects_a_pattern_the_storefront_cannot_compile(): void
     {
+        // BACKWARD COMPATIBILITY: remove when the minimum supported core is 2.4.10.
+        $this->skipUnlessCoreSupports($this->core()->hasAttributeRegexRule(), 'Attribute regex validation');
+
         $admin = $this->createAdmin();
 
         $response = $this->adminPost($admin, '/api/admin/catalog/attributes', [

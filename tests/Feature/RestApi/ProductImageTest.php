@@ -55,6 +55,9 @@ class ProductImageTest extends RestApiTestCase
 
     public function test_image_carries_its_alt_text(): void
     {
+        // BACKWARD COMPATIBILITY: remove when the minimum supported core is 2.4.10.
+        $this->skipUnlessCoreSupports($this->core()->hasProductImageAltText(), 'Product image alt text');
+
         $this->seedRequiredData();
         $image = $this->seedImage('Blue running shoe, side view');
 

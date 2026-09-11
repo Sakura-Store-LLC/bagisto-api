@@ -11,6 +11,14 @@ use Webkul\Theme\Models\Section;
  */
 class AppearanceSectionTest extends AdminApiTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // BACKWARD COMPATIBILITY: remove when the minimum supported core is 2.4.10.
+        $this->skipUnlessCoreSupports($this->core()->hasAppearanceSections(), 'Appearance sections');
+    }
+
     private function channelId(): int
     {
         $this->seedRequiredData();

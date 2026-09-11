@@ -16,6 +16,14 @@ use Webkul\BagistoApi\Tests\GraphQLTestCase;
  */
 class SectionsTest extends GraphQLTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // BACKWARD COMPATIBILITY: remove when the minimum supported core is 2.4.10.
+        $this->skipUnlessCoreSupports($this->core()->hasAppearanceSections(), 'Appearance sections');
+    }
+
     private function existingSectionId(): int
     {
         $id = Section::query()

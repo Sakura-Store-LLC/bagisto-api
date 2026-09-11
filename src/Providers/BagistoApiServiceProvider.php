@@ -106,6 +106,7 @@ use Webkul\BagistoApi\Http\Middleware\VerifyStorefrontKey;
 use Webkul\BagistoApi\Metadata\CustomIdentifiersExtractor;
 use Webkul\BagistoApi\Metadata\PathGatedResourceNameCollectionFactory;
 use Webkul\BagistoApi\Metadata\SourceDocblockPropertyMetadataFactory;
+use Webkul\BagistoApi\Metadata\VersionGatedResourceNameCollectionFactory;
 use Webkul\BagistoApi\Models\CoreAttribute;
 use Webkul\BagistoApi\OpenApi\SplitOpenApiFactory;
 use Webkul\BagistoApi\Repositories\GuestCartTokensRepository;
@@ -169,6 +170,7 @@ use Webkul\BagistoApi\State\SnakeCaseLinksHandler;
 use Webkul\BagistoApi\State\WishlistProcessor;
 use Webkul\BagistoApi\State\WishlistProvider;
 use Webkul\BagistoApi\Support\CartOptionFileStaging;
+use Webkul\BagistoApi\Support\CoreCapabilities;
 use Webkul\EUWithdrawal\Services\WithdrawalService;
 use Webkul\RMA\Helpers\Helper;
 use Webkul\RMA\Repositories\RMAAdditionalFieldRepository;
@@ -198,6 +200,9 @@ class BagistoApiServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Registered first: the resource gate and the state bindings both read it.
+        $this->app->singleton(CoreCapabilities::class);
+
         $this->registerAdminApiGuardConfig();
 
         $this->mergeConfigFrom(__DIR__.'/../Admin/Config/audit.php', 'bagistoapi.audit');
@@ -224,6 +229,12 @@ class BagistoApiServiceProvider extends ServiceProvider
 
         $this->app->extend(OpenApiFactoryInterface::class, function ($openApiFactory) {
             return new SplitOpenApiFactory($openApiFactory);
+        });
+
+        // BACKWARD COMPATIBILITY: exposes only the theme surface this core can serve.
+        // Remove this extend() and the factory when the minimum supported core is 2.4.10.
+        $this->app->extend(ResourceNameCollectionFactoryInterface::class, function ($inner, $app) {
+            return new VersionGatedResourceNameCollectionFactory($inner, $app->make(CoreCapabilities::class));
         });
 
         // Skip the ~700-route API resource enumeration for non-API HTTP requests
@@ -703,11 +714,18 @@ class BagistoApiServiceProvider extends ServiceProvider
 
         $this->app->singleton(AdminConfigurationSchemaResolver::class);
         $this->app->tag(AdminConfigurationMenuQueryResolver::class, QueryItemResolverInterface::class);
-        $this->app->tag(ThemeQueryResolver::class, QueryItemResolverInterface::class);
-        $this->app->tag(AdminAppearanceThemeQueryResolver::class, QueryItemResolverInterface::class);
-        $this->app->tag(AdminAppearanceThemeImpactQueryResolver::class, QueryItemResolverInterface::class);
-        $this->app->tag(AdminAppearanceSectionFieldsQueryResolver::class, QueryItemResolverInterface::class);
-        $this->app->tag(AdminAppearanceSectionPreviewQueryResolver::class, QueryItemResolverInterface::class);
+        // These resolvers reach the section repository through their providers, and every
+        // tagged resolver is instantiated when the schema is built.
+        //
+        // BACKWARD COMPATIBILITY: unwrap this condition when the minimum supported core is
+        // 2.4.10. The older theme surface has no resolvers — it uses BaseQueryItemResolver.
+        if (app(CoreCapabilities::class)->hasAppearanceSections()) {
+            $this->app->tag(ThemeQueryResolver::class, QueryItemResolverInterface::class);
+            $this->app->tag(AdminAppearanceThemeQueryResolver::class, QueryItemResolverInterface::class);
+            $this->app->tag(AdminAppearanceThemeImpactQueryResolver::class, QueryItemResolverInterface::class);
+            $this->app->tag(AdminAppearanceSectionFieldsQueryResolver::class, QueryItemResolverInterface::class);
+            $this->app->tag(AdminAppearanceSectionPreviewQueryResolver::class, QueryItemResolverInterface::class);
+        }
         $this->app->tag(AdminConfigurationValuesQueryResolver::class, QueryItemResolverInterface::class);
         $this->app->tag(AdminConfigurationSlugQueryResolver::class, QueryItemResolverInterface::class);
         $this->app->tag(AdminMenuQueryResolver::class, QueryItemResolverInterface::class);

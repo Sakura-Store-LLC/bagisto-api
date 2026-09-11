@@ -5,6 +5,7 @@ namespace Webkul\BagistoApi\State\Concerns;
 use Illuminate\Support\Collection;
 use Webkul\BagistoApi\Exception\InvalidInputException;
 use Webkul\RMA\Repositories\RMACustomFieldRepository;
+
 trait ResolvesReturnCustomFields
 {
     public const OPTION_FIELD_TYPES = ['select', 'radio'];

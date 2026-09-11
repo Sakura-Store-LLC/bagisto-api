@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Webkul\BagistoApi\Admin\Dto\AdminCatalogProductRestDto;
 use Webkul\BagistoApi\Admin\Models\AdminCatalogProduct;
 use Webkul\BagistoApi\Admin\State\Concerns\AbstractAdminCollectionProvider;
+use Webkul\BagistoApi\Support\CoreCapabilities;
 
 /**
  * Provider for the admin Catalog → Products datagrid endpoint.
@@ -21,8 +22,8 @@ use Webkul\BagistoApi\Admin\State\Concerns\AbstractAdminCollectionProvider;
  *
  * Quantity, image count, base image, stock handling, category names and the family name
  * are read from the flat table's own derived columns, as the admin listing reads them, so
- * the row matches the screen: the base image is the first by position rather than by id,
- * and a product in several categories lists all of them.
+ * the row matches the screen. A core older than 2.4.10 has no such columns and the listing
+ * computes the same values per returned row.
  */
 class AdminCatalogProductCollectionProvider extends AbstractAdminCollectionProvider
 {
@@ -33,6 +34,8 @@ class AdminCatalogProductCollectionProvider extends AbstractAdminCollectionProvi
     protected ?string $resolvedChannel = null;
 
     protected bool $listingIsGraphQL = false;
+
+    public function __construct(protected CoreCapabilities $capabilities) {}
 
     /**
      * Override provide() to check the Elasticsearch branch before delegating
@@ -66,7 +69,7 @@ class AdminCatalogProductCollectionProvider extends AbstractAdminCollectionProvi
         $this->resolvedLocale = $locale;
         $this->resolvedChannel = $channel;
 
-        return DB::table('product_flat')
+        $query = DB::table('product_flat')
             ->select(
                 'product_flat.product_id',
                 'product_flat.sku',
@@ -92,13 +95,31 @@ class AdminCatalogProductCollectionProvider extends AbstractAdminCollectionProvi
                 'product_flat.featured',
                 'product_flat.created_at',
                 'product_flat.updated_at',
+            );
+
+        if ($this->capabilities->hasProductFlatDerivedColumns()) {
+            $query->addSelect(
                 'product_flat.quantity',
                 'product_flat.images_count',
                 'product_flat.base_image',
                 'product_flat.manage_stock',
                 'product_flat.category_name',
                 'product_flat.attribute_family_name as attribute_family',
-            )
+            );
+        } else {
+            // BACKWARD COMPATIBILITY: a core before 2.4.10 has no derived columns on the
+            // flat table, so the listing computes the same values per returned row. Drop
+            // this arm when the minimum supported core is 2.4.10.
+            $query->leftJoin('attribute_families as af', 'product_flat.attribute_family_id', '=', 'af.id')
+                ->addSelect('af.name as attribute_family')
+                ->selectRaw('(SELECT COALESCE(SUM(qty), 0) FROM '.$p.'product_inventories WHERE '.$p.'product_inventories.product_id = '.$p.'product_flat.product_id) as quantity')
+                ->selectRaw('(SELECT COUNT(*) FROM '.$p.'product_images WHERE '.$p.'product_images.product_id = '.$p.'product_flat.product_id) as images_count')
+                ->selectRaw('(SELECT path FROM '.$p.'product_images WHERE '.$p.'product_images.product_id = '.$p.'product_flat.product_id ORDER BY position ASC, id ASC LIMIT 1) as base_image')
+                ->selectRaw('(SELECT ct.name FROM '.$p.'category_translations ct INNER JOIN '.$p.'product_categories pc ON pc.category_id = ct.category_id WHERE pc.product_id = '.$p.'product_flat.product_id AND ct.locale = ? ORDER BY pc.category_id ASC LIMIT 1) as category_name', [$locale])
+                ->selectRaw('NULL as manage_stock');
+        }
+
+        return $query
             ->selectRaw('(SELECT category_id FROM '.$p.'product_categories WHERE '.$p.'product_categories.product_id = '.$p.'product_flat.product_id ORDER BY category_id ASC LIMIT 1) as category_id')
             ->where('product_flat.locale', $locale)
             ->where('product_flat.channel', $channel);
@@ -165,7 +186,8 @@ class AdminCatalogProductCollectionProvider extends AbstractAdminCollectionProvi
             'sku' => 'product_flat.sku',
             'attribute_family' => 'product_flat.attribute_family_id',
             'price' => 'product_flat.price',
-            'quantity' => 'product_flat.quantity',
+            // BACKWARD COMPATIBILITY: before 2.4.10 the quantity is a selected alias, not a column.
+            'quantity' => $this->capabilities->hasProductFlatDerivedColumns() ? 'product_flat.quantity' : 'quantity',
             'product_id' => 'product_flat.product_id',
             'status' => 'product_flat.status',
             'type' => 'product_flat.type',

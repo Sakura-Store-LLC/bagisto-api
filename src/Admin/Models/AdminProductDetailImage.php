@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\ApiResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Webkul\BagistoApi\Support\CoreCapabilities;
 
 /**
  * Product image — nested sub-resource of AdminCatalogProduct (`images` connection).
@@ -52,6 +53,11 @@ class AdminProductDetailImage extends Model
     #[ApiProperty(writable: false)]
     public function getAltTextAttribute(): ?string
     {
+        // BACKWARD COMPATIBILITY: remove when the minimum supported core is 2.4.10.
+        if (! app(CoreCapabilities::class)->hasProductImageAltText()) {
+            return null;
+        }
+
         return DB::table('product_image_translations')
             ->where('product_image_id', $this->id)
             ->where('locale', app()->getLocale())

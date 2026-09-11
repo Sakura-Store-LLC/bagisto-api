@@ -1091,6 +1091,7 @@ return [
             'update-failed' => 'Attribute family could not be updated.',
             'create-failed' => 'Attribute family could not be created.',
             'default-delete-error' => 'The default attribute family cannot be deleted.',
+            'last-delete-error' => 'At least one attribute family is required.',
             'attribute-product-error' => 'This attribute family is in use by one or more products. Reassign those products before deleting it.',
             'delete-failed' => 'Attribute family could not be deleted.',
             'no-permission' => 'You do not have permission to manage attribute families.',

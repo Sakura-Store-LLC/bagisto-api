@@ -7,6 +7,14 @@ use Webkul\Theme\Models\Section;
 
 class SectionTest extends RestApiTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // BACKWARD COMPATIBILITY: remove when the minimum supported core is 2.4.10.
+        $this->skipUnlessCoreSupports($this->core()->hasAppearanceSections(), 'Appearance sections');
+    }
+
     private string $collectionUrl = '/api/shop/sections';
 
     private function itemUrl(int $id): string
