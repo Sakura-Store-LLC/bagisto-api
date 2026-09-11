@@ -119,6 +119,7 @@ use Webkul\BagistoApi\Resolver\GdprRequestQueryResolver;
 use Webkul\BagistoApi\Resolver\PageByUrlKeyResolver;
 use Webkul\BagistoApi\Resolver\ProductCollectionResolver;
 use Webkul\BagistoApi\Resolver\SingleProductBagistoApiResolver;
+use Webkul\BagistoApi\Resolver\StorefrontFeatureQueryResolver;
 use Webkul\BagistoApi\Resolver\ThemeQueryResolver;
 use Webkul\BagistoApi\Resolver\WishlistQueryResolver;
 use Webkul\BagistoApi\Routing\CustomIriConverter;
@@ -193,7 +194,7 @@ class BagistoApiServiceProvider extends ServiceProvider
     /**
      * Package version, surfaced as the OpenAPI `info.version`.
      */
-    const BAGISTO_API_VERSION = '2.4.1';
+    const BAGISTO_API_VERSION = '2.4.4';
 
     /**
      * Register the service provider bindings.
@@ -699,6 +700,7 @@ class BagistoApiServiceProvider extends ServiceProvider
         $this->app->tag(BaseQueryItemResolver::class, QueryItemResolverInterface::class);
         $this->app->tag(CompareItemQueryResolver::class, QueryItemResolverInterface::class);
         $this->app->tag(WishlistQueryResolver::class, QueryItemResolverInterface::class);
+        $this->app->tag(StorefrontFeatureQueryResolver::class, QueryItemResolverInterface::class);
         $this->app->tag(GdprRequestQueryResolver::class, QueryItemResolverInterface::class);
         $this->app->tag(CustomerQueryResolver::class, QueryItemResolverInterface::class);
         $this->app->tag(AdminProfileQueryResolver::class, QueryItemResolverInterface::class);

@@ -713,6 +713,19 @@ type Query {
     "Order id to list returnable items for"
     orderId: Int!
   ): [ReturnableItem]
+  returnableOrders(
+    "Filter by order number (partial match)."
+    incrementId: String
+
+    "Filter by order status."
+    status: String
+
+    "Sort column — created_at, increment_id or grand_total."
+    sort: String
+
+    "Sort direction — desc or asc."
+    order: String
+  ): [ReturnableOrder]
   section(id: ID!): Section
   sections(
     "Returns the first n elements from the list."
@@ -732,6 +745,9 @@ type Query {
 
   "Get available shipping rates for a cart by token"
   collectionShippingRates: [ShippingRates]
+
+  "The optional storefront features this channel has switched on."
+  storefrontFeature: StorefrontFeature
 
   "The theme the current channel runs, and the section types it draws."
   theme: Theme
@@ -2437,15 +2453,16 @@ type Customer implements Node {
   dateOfBirth: String
   email: String
   phone: String
-  status: String!
+  status: String
   apiToken: String
   customerGroupId: String
   channelId: String
-  subscribedToNewsLetter: Boolean!
-  isVerified: String!
-  isSuspended: String!
+  subscribedToNewsLetter: Boolean
+  isVerified: String
+  isSuspended: String
   token: String
   rememberToken: String
+  deviceToken: String
   name: String
 }
 
@@ -3908,6 +3925,22 @@ type ReturnableItem implements Node {
   rmaReturnPeriod: Int
 }
 
+type ReturnableOrder implements Node {
+  id: ID!
+  _id: Int
+  incrementId: String
+  status: String
+  statusLabel: String
+  grandTotal: Float
+  formattedGrandTotal: String
+  orderCurrencyCode: String
+  paymentMethodTitle: String
+  totalQtyOrdered: Int
+  totalReturnedQty: Int
+  returnableQty: Int
+  createdAt: String
+}
+
 type Section implements Node {
   id: ID!
   _id: Int!
@@ -4005,6 +4038,15 @@ type ShippingRates implements Node {
   baseFormattedPrice: String
   carrier: String
   carrierTitle: String
+}
+
+"The optional storefront features this channel has switched on."
+type StorefrontFeature implements Node {
+  id: ID!
+  _id: String
+  channel: String
+  gdpr: Boolean
+  euWithdrawal: Boolean
 }
 
 "The theme the current channel runs, and the section types it draws."
@@ -5305,15 +5347,16 @@ type createCustomerNestedPayload implements Node {
   dateOfBirth: String
   email: String
   phone: String
-  status: String!
+  status: String
   apiToken: String
   customerGroupId: String
   channelId: String
-  subscribedToNewsLetter: Boolean!
-  isVerified: String!
-  isSuspended: String!
+  subscribedToNewsLetter: Boolean
+  isVerified: String
+  isSuspended: String
   token: String
   rememberToken: String
+  deviceToken: String
   name: String
 }
 
@@ -5360,11 +5403,12 @@ input createCustomerInput {
   dateOfBirth: String
   email: String
   phone: String
-  status: String!
+  status: String
   password: String
-  subscribedToNewsLetter: Boolean!
-  isVerified: String!
-  isSuspended: String!
+  subscribedToNewsLetter: Boolean
+  isVerified: String
+  isSuspended: String
+  deviceToken: String
   confirmPassword: String
   clientMutationId: String
 }

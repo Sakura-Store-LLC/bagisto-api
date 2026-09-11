@@ -731,6 +731,11 @@
         "tag": "Customer Return",
         "resource": "Webkul\\BagistoApi\\Models\\ReturnableItem"
     },
+    "returnableOrders": {
+        "kind": "query",
+        "tag": "Customer Return",
+        "resource": "Webkul\\BagistoApi\\Models\\ReturnableOrder"
+    },
     "revokeGdprRequest": {
         "kind": "mutation",
         "tag": "GDPR Requests",
@@ -749,6 +754,11 @@
         "kind": "query",
         "tag": "Theme",
         "resource": "Webkul\\BagistoApi\\Models\\Section"
+    },
+    "storefrontFeature": {
+        "kind": "query",
+        "tag": "Storefront",
+        "resource": "Webkul\\BagistoApi\\Models\\StorefrontFeature"
     },
     "theme": {
         "kind": "query",

@@ -300,6 +300,29 @@ class CustomerReturnTest extends RestApiTestCase
         expect($list->json('0.message'))->toBe('Any update?');
     }
 
+    public function test_send_message_accepts_multipart_with_an_attachment(): void
+    {
+        $this->seedRequiredData();
+        $customer = $this->createCustomer();
+        $data = $this->createReturn($customer);
+
+        $response = $this->authenticatedPost($customer, '/api/shop/return-messages', [
+            'return_id' => $data['rma']->id,
+            'message' => 'Photo of the damaged zipper attached.',
+            'file' => UploadedFile::fake()->image('zipper.png'),
+        ]);
+
+        expect($response->getStatusCode())->toBeIn([200, 201]);
+        expect($response->json('message'))->toBe('Photo of the damaged zipper attached.');
+        expect($response->json('attachment'))->toBe('zipper.png');
+        expect($response->json('attachmentUrl'))->not->toBeNull();
+
+        $this->assertDatabaseHas('rma_messages', [
+            'rma_id' => $data['rma']->id,
+            'attachment' => 'zipper.png',
+        ]);
+    }
+
     public function test_messages_of_another_customer_blocked(): void
     {
         $this->seedRequiredData();

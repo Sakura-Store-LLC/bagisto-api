@@ -71,11 +71,12 @@ class CustomerProcessor implements ProcessorInterface
                     'phone' => $data->phone,
                     'gender' => $data->gender,
                     'date_of_birth' => $data->date_of_birth,
-                    'status' => $data->status ?? 1,
-                    'is_verified' => $data->is_verified ?? 0,
-                    'is_suspended' => $data->is_suspended ?? 0,
+                    'status' => 1,
+                    'is_verified' => ! core()->getConfigData('customer.settings.email.verification'),
+                    'is_suspended' => 0,
                     'subscribed_to_news_letter' => $data->subscribed_to_news_letter ?? false,
                     'api_token' => Str::random(80),
+                    'token' => md5(uniqid(rand(), true)),
                     'channel_id' => core()->getCurrentChannel()->id,
                     'customer_group_id' => $this->defaultCustomerGroupId(),
                 ];
@@ -100,8 +101,7 @@ class CustomerProcessor implements ProcessorInterface
                 $freshCustomer = Customer::findOrFail($customer->id);
 
                 /** Generate a Sanctum token so the customer can use it immediately after registration */
-                $sanctumToken = $freshCustomer->createToken('customer-registration')->plainTextToken;
-                $freshCustomer->token = $sanctumToken;
+                $freshCustomer->token = $freshCustomer->createToken('customer-registration')->plainTextToken;
 
                 return $freshCustomer;
             } elseif ($operation->getName() === 'update') {

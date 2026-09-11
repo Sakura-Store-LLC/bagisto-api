@@ -12,7 +12,7 @@
             "name": "",
             "url": ""
         },
-        "version": "2.4.1"
+        "version": "2.4.4"
     },
     "servers": [
         {
@@ -9801,7 +9801,7 @@
                     }
                 },
                 "summary": "Send a message on a return request",
-                "description": "Adds a customer message to the RMA conversation. Body `{ return_id, message }`; an optional file can be attached via multipart `file` (REST only). Returns the created message.",
+                "description": "Adds a customer message to the RMA conversation. Body `{ return_id, message }`; an optional file can be attached by sending the body as `multipart/form-data` with the file in `file` (REST only). Returns the created message, with `attachment` and `attachmentUrl` set when a file was sent.",
                 "parameters": [
                     {
                         "name": "X-STOREFRONT-KEY",
@@ -9878,6 +9878,30 @@
                                     "message": {
                                         "type": "string",
                                         "example": "Any update on my return?"
+                                    }
+                                }
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "return_id",
+                                    "message"
+                                ],
+                                "properties": {
+                                    "return_id": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Photo of the damaged zipper attached."
+                                    },
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Attachment for this message."
                                     }
                                 }
                             }
@@ -10041,6 +10065,147 @@
                         "deprecated": false,
                         "schema": {
                             "type": "integer"
+                        },
+                        "style": "form",
+                        "explode": true
+                    },
+                    {
+                        "name": "X-STOREFRONT-KEY",
+                        "in": "header",
+                        "description": "Storefront API Key for authentication. Required for all shop/storefront API requests.",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Locale",
+                        "in": "header",
+                        "description": "Locale code for localized data (e.g. \"en\", \"fr\", \"ar\"). Defaults to channel's default locale.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Channel",
+                        "in": "header",
+                        "description": "Channel code (e.g. \"default\"). Defaults to the current channel.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Currency",
+                        "in": "header",
+                        "description": "Currency code (e.g. \"USD\", \"EUR\", \"INR\"). Defaults to channel's base currency.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "USD"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ]
+            }
+        },
+        "/returnable-orders": {
+            "get": {
+                "operationId": "api_apishopreturnable-orders_get_collection",
+                "tags": [
+                    "Customer Return"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Orders eligible for a new return.",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": 41,
+                                        "incrementId": "41",
+                                        "status": "completed",
+                                        "statusLabel": "Completed",
+                                        "grandTotal": 160,
+                                        "formattedGrandTotal": "$160.00",
+                                        "orderCurrencyCode": "USD",
+                                        "paymentMethodTitle": "Cash On Delivery",
+                                        "totalQtyOrdered": 3,
+                                        "totalReturnedQty": 1,
+                                        "returnableQty": 2,
+                                        "createdAt": "2026-08-30T09:12:44+00:00"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "List the orders a return can still be raised against",
+                "description": "The authenticated customer's orders that can start a return — the set the storefront shows first in the New Request flow. An order appears while it holds at least one item that was placed with returns allowed, is inside its return window, and has quantity left after everything already returned. Canceled, closed, fraud and pending-payment orders never appear. Pick an order from here, then call /returnable-items?order_id= for the items and their quantity caps.",
+                "parameters": [
+                    {
+                        "name": "increment_id",
+                        "in": "query",
+                        "description": "Filter by order number (partial match).",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": true
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by order status.",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": true
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort column — `created_at` (default), `increment_id` or `grand_total`.",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": true
+                    },
+                    {
+                        "name": "order",
+                        "in": "query",
+                        "description": "Sort direction — `desc` (default) or `asc`.",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string"
                         },
                         "style": "form",
                         "explode": true
@@ -19412,6 +19577,91 @@
                 ]
             }
         },
+        "/features": {
+            "get": {
+                "operationId": "api_apishopfeatures_get_collection",
+                "tags": [
+                    "Storefront"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The feature flags of the current channel.",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "default",
+                                        "channel": "default",
+                                        "gdpr": true,
+                                        "euWithdrawal": false
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Which optional features this channel has switched on",
+                "description": "Tells a storefront which optional features the store has enabled, so it can decide what to render before calling anything that might refuse. Both flags are read per channel from the admin configuration. Call this once on boot rather than probing an endpoint and reading its error. Returns: `gdpr` — whether customers may raise GDPR data requests (`/api/shop/gdpr-requests`); `euWithdrawal` — whether the EU right-of-withdrawal form is offered on orders (`/api/shop/eu-withdrawals`). Returns are not listed: Bagisto has no master switch for them, so whether a customer can return anything is answered per order by `/api/shop/returnable-orders`. Public endpoint.",
+                "parameters": [
+                    {
+                        "name": "X-STOREFRONT-KEY",
+                        "in": "header",
+                        "description": "Storefront API Key for authentication. Required for all shop/storefront API requests.",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Locale",
+                        "in": "header",
+                        "description": "Locale code for localized data (e.g. \"en\", \"fr\", \"ar\"). Defaults to channel's default locale.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Channel",
+                        "in": "header",
+                        "description": "Channel code (e.g. \"default\"). Defaults to the current channel.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Currency",
+                        "in": "header",
+                        "description": "Currency code (e.g. \"USD\", \"EUR\", \"INR\"). Defaults to channel's base currency.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "USD"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ]
+            }
+        },
         "/sections": {
             "get": {
                 "operationId": "api_apishopsections_get_collection",
@@ -23715,6 +23965,9 @@
         },
         {
             "name": "Theme"
+        },
+        {
+            "name": "Storefront"
         }
     ],
     "webhooks": []

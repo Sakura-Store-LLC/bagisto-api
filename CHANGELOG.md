@@ -5,12 +5,13 @@ All notable changes to `bagisto/bagisto-api` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-_Release coming soon._
+## [2.4.4] - 2026-09-14
 
 ### Added
 
+- One package now serves Bagisto 2.4.10 and the releases before it. The theme surface follows the store it is installed on: a 2.4.10 store gets the Appearance API, an older store keeps the theme customization endpoints it already had. Nothing else in the API changes shape between them.
+- `GET /api/shop/features` and the `storefrontFeature` query — which optional features this channel has switched on, so a storefront can decide what to render before calling something that might refuse. Covers GDPR data requests and the EU right of withdrawal.
+- `GET /api/shop/returnable-orders` and the `returnableOrders` query — the customer's orders a return can still be raised against, which is the list the New Request flow opens with. Filter by order number or status; sort by date, order number or total.
 - Appearance API for Bagisto 2.4.10: theme gallery, impact report, activation per channel, and section management for the theme a channel runs.
 - Section draft workflow: stage content per locale, stage status and order, then publish or discard in one call.
 - Section preview endpoint, rendering a theme with its staged edits applied.
@@ -38,13 +39,19 @@ _Release coming soon._
 - Deleting an email template or marketing event still used by a campaign is refused.
 - An attribute `regex` the storefront cannot compile is refused.
 - Customer email is unique per channel, not per store.
+- Customer registration demanded `status`, `isVerified`, `isSuspended` and `subscribedToNewsLetter`, none of which a registering customer should send. They are optional now, and the account's state is decided by the store as it is on the storefront: a new account is active and unsuspended, and starts verified only when email verification is switched off. A value sent for any of them is accepted and ignored, so existing clients keep working.
+- Installing the package added an autoload entry for a `Webkul\GraphQL` package that does not exist and that nothing in the API refers to. It is no longer added. A store installed before this release still carries the entry; delete that line from `composer.json` and run `composer dump-autoload` to clear it.
+- Attaching a file to a return message was impossible: the endpoint documented a `file` upload but rejected the multipart request it needed. `POST /api/shop/return-messages` now accepts `multipart/form-data` and stores the attachment.
+- A customer registered with a `status` of `"active"` was created inactive, because the value was written to the account's active flag as-is. The flag is no longer taken from the request at all — a new account is always active.
+- A new account was created unverified unless the request said otherwise, so a customer who sent nothing could not sign in afterwards. Verification now follows the store's email verification setting, as the storefront sign-up does: verified while that setting is off, awaiting confirmation while it is on.
+- A customer registered through the API never received a working verification link, because the account was created without the token the verification email carries.
 
 ### Changed
 
-- **BREAKING** — Storefront theme customizations are now sections: `/api/shop/theme-customizations[/{id}]` and `themeCustomization(s)` become `/api/shop/sections[/{id}]` and `section`/`sections`; translations carry `sectionId`.
-- **BREAKING** — Storefront sections return only published sections of the channel's active theme.
-- **BREAKING** — Admin theme customizations move out of Settings: `/api/admin/settings/themes` and `adminSettingsTheme*` become `/api/admin/appearance/themes` and `/api/admin/appearance/sections`, under `appearance.*` permissions. Mass-delete and mass-update-status are gone; bulk status is the staged status plus publish.
-- **BREAKING** — Deleting an attribute family is refused for the default family rather than the last remaining one.
+- On a Bagisto 2.4.10 store, storefront theme customizations are sections: `/api/shop/theme-customizations[/{id}]` and `themeCustomization(s)` become `/api/shop/sections[/{id}]` and `section`/`sections`, and translations carry `sectionId`. On an older store the previous endpoints stay exactly as they were — upgrading the store is what moves them.
+- On a Bagisto 2.4.10 store, storefront sections return only the published sections of the channel's active theme.
+- On a Bagisto 2.4.10 store, admin theme customizations move out of Settings: `/api/admin/settings/themes` and `adminSettingsTheme*` become `/api/admin/appearance/themes` and `/api/admin/appearance/sections`, under `appearance.*` permissions, and bulk status becomes the staged status plus publish rather than mass-update-status. On an older store the Settings endpoints and their `settings.themes.*` permissions are unchanged.
+- On a Bagisto 2.4.10 store, deleting an attribute family is refused for the default family; on an older store it is refused for the last remaining one, as before.
 - CI runs against Bagisto v2.4.10, and a failing Pest suite now fails the build.
 
 ## [2.4.3] - 2026-08-26

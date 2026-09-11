@@ -7,10 +7,27 @@ Comprehensive REST and GraphQL APIs for seamless e-commerce integration and exte
 ## Requirements
 
 - PHP 8.3+
-- [Bagisto](https://github.com/bagisto/bagisto) **v2.4.10** (the version this package is tested against in CI)
+- [Bagisto](https://github.com/bagisto/bagisto) **v2.4.x** — tested in CI against **v2.4.10**, and supported on the 2.4 releases before it (see [Bagisto Compatibility](#bagisto-compatibility))
 - Composer 2
 - MySQL 8.0+ or PostgreSQL 14+
 - API Platform for Laravel — `api-platform/laravel` and `api-platform/graphql` (`~4.3.8`), which bring in the remaining `api-platform/*` components at a matching version, installed automatically via `composer require`
+
+## Bagisto Compatibility
+
+One package serves the whole 2.4 line. It detects what the store it is installed on can do, so most of the API is identical everywhere and only the theme surface follows the store.
+
+| Store | Theme endpoints | Permissions |
+|-------|-----------------|-------------|
+| **v2.4.10 and newer** | `/api/admin/appearance/themes`, `/api/admin/appearance/sections`, `/api/shop/sections` and `/api/shop/theme` — including the draft, publish, discard, reorder, duplicate and preview flow | `appearance.*` |
+| **v2.4.9 and older** | `/api/admin/settings/themes` with mass-delete and mass-update-status, and `/api/shop/theme-customizations` | `settings.themes.*` |
+
+Only one set is registered, so endpoints the store cannot support are absent rather than failing when called. A few smaller behaviours follow the store the same way: product image `alt_text`, the derived columns behind the product listing, attribute `regex` validation, the attribute-family delete guard, and the in-use guards on email templates and marketing events.
+
+Upgrading Bagisto is what moves the theme endpoints — the package itself needs no change. Rebuild the caches afterwards so the new surface is picked up:
+
+```bash
+php artisan bagisto-api-platform:optimize
+```
 
 ## Installation
 
