@@ -12,7 +12,7 @@
             "name": "",
             "url": ""
         },
-        "version": "2.4.1"
+        "version": "2.4.4"
     },
     "servers": [
         {
@@ -27,6 +27,1484 @@
         }
     ],
     "paths": {
+        "/appearance/sections/reorder": {
+            "post": {
+                "operationId": "api_apiadminappearancesectionsreorder_post",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order staged.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "sectionIds": [
+                                        5,
+                                        3,
+                                        2
+                                    ],
+                                    "hasDraft": {
+                                        "5": true,
+                                        "3": true,
+                                        "2": true
+                                    },
+                                    "message": "Section order staged successfully."
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Missing or unknown section IDs.",
+                        "links": []
+                    },
+                    "201": {
+                        "description": "AdminAppearanceSectionReorder resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionReorder"
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionReorder.html"
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    }
+                },
+                "summary": "Stage a new section order",
+                "description": "Stage a new section order",
+                "parameters": [],
+                "requestBody": {
+                    "description": "Every section of the theme and channel, in the order they should render. A partial list is rejected, because the sections left out would be renumbered over the ones sent. Read the current set from GET /appearance/themes/{code}/sections first. The footer is pinned last whatever position it is given.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "sectionIds"
+                                ],
+                                "properties": {
+                                    "sectionIds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "description": "Every section id of the theme and channel."
+                                    }
+                                }
+                            },
+                            "example": {
+                                "sectionIds": [
+                                    5,
+                                    3,
+                                    2,
+                                    1,
+                                    4,
+                                    6
+                                ]
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/appearance/sections/{id}": {
+            "get": {
+                "operationId": "api_apiadminappearancesections_id_get",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The section.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": 3,
+                                    "name": "Categories Collections",
+                                    "type": "category_carousel",
+                                    "themeCode": "default",
+                                    "channelId": 1,
+                                    "sortOrder": 3,
+                                    "status": 1,
+                                    "draftStatus": null,
+                                    "draftSortOrder": null,
+                                    "hasDraft": false,
+                                    "isPinned": false,
+                                    "createdAt": "2024-04-16T21:44:15+05:30",
+                                    "updatedAt": "2026-08-21T18:05:39+05:30",
+                                    "translations": [
+                                        {
+                                            "locale": "en",
+                                            "options": {
+                                                "filters": {
+                                                    "sort": "asc",
+                                                    "limit": "10"
+                                                }
+                                            },
+                                            "draftOptions": null
+                                        }
+                                    ],
+                                    "message": null
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Section not found."
+                    }
+                },
+                "summary": "Get a section",
+                "description": "Get a section",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Section ID",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "api_apiadminappearancesections_id_put",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Section updated.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": 12,
+                                    "name": "Summer Banner",
+                                    "type": "image_carousel",
+                                    "themeCode": "default",
+                                    "channelId": 1,
+                                    "sortOrder": 2,
+                                    "status": 1,
+                                    "draftStatus": true,
+                                    "draftSortOrder": null,
+                                    "hasDraft": false,
+                                    "isPinned": false,
+                                    "createdAt": "2026-08-21T18:05:39+05:30",
+                                    "updatedAt": "2026-08-21T18:05:39+05:30",
+                                    "translations": [
+                                        {
+                                            "locale": "en",
+                                            "options": {
+                                                "images": []
+                                            },
+                                            "draftOptions": null
+                                        }
+                                    ],
+                                    "message": "Section updated successfully."
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "404": {
+                        "description": "Section not found."
+                    },
+                    "422": {
+                        "description": "Invalid payload, or a second footer links section.",
+                        "links": []
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    }
+                },
+                "summary": "Update a section",
+                "description": "Writes the published values of a section. Send `options` with `?locale=` to write that locale's published content; use the draft endpoint to stage edits instead.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Section ID",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "locale",
+                        "in": "query",
+                        "description": "Locale the options belong to",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        },
+                        "style": "form",
+                        "explode": true
+                    }
+                ],
+                "requestBody": {
+                    "description": "The updated AdminAppearanceSection resource",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "type",
+                                    "sortOrder",
+                                    "channelId",
+                                    "themeCode"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Summer Banner"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "image_carousel",
+                                            "product_carousel",
+                                            "category_carousel",
+                                            "footer_links",
+                                            "static_content",
+                                            "services_content"
+                                        ],
+                                        "example": "image_carousel"
+                                    },
+                                    "sortOrder": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "channelId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "themeCode": {
+                                        "type": "string",
+                                        "example": "default"
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "options": {
+                                        "type": "object",
+                                        "example": {
+                                            "images": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            },
+            "delete": {
+                "operationId": "api_apiadminappearancesections_id_delete",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Section deleted."
+                    },
+                    "404": {
+                        "description": "Section not found."
+                    }
+                },
+                "summary": "Delete a section",
+                "description": "Delete a section",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Section ID",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ]
+            }
+        },
+        "/appearance/sections/{id}/draft": {
+            "post": {
+                "operationId": "api_apiadminappearancesections_iddraft_post",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Draft saved.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "sectionId": 3,
+                                    "locale": "en",
+                                    "hasDraft": true
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Section not found."
+                    },
+                    "422": {
+                        "description": "Options missing.",
+                        "links": []
+                    },
+                    "201": {
+                        "description": "AdminAppearanceSectionDraft resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionDraft"
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionDraft.html"
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    }
+                },
+                "summary": "Stage edits for a section",
+                "description": "Holds the options as an unpublished draft for the locale. The storefront keeps drawing the published values until the theme is published.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Section ID",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "locale",
+                        "in": "query",
+                        "description": "Locale the options belong to",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        },
+                        "style": "form",
+                        "explode": true
+                    }
+                ],
+                "requestBody": {
+                    "description": "The new AdminAppearanceSectionDraft resource",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "options"
+                                ],
+                                "properties": {
+                                    "options": {
+                                        "type": "object",
+                                        "example": {
+                                            "title": "Summer Sale"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/appearance/sections/{id}/duplicate": {
+            "post": {
+                "operationId": "api_apiadminappearancesections_idduplicate_post",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Section copied.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "sourceId": 3,
+                                    "sectionId": 12,
+                                    "name": "Categories Collections (copy)",
+                                    "type": "category_carousel",
+                                    "message": "Section copied successfully."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Section not found."
+                    },
+                    "201": {
+                        "description": "AdminAppearanceSectionDuplicate resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionDuplicate"
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionDuplicate.html"
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "links": []
+                    }
+                },
+                "summary": "Copy a section",
+                "description": "Copies a section and its content into the same theme and channel. The copy is created switched off. Read the copy back with the section endpoint.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Section ID to copy",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ],
+                "requestBody": {
+                    "description": "No fields. The section to copy is the one in the path.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": []
+                            }
+                        }
+                    },
+                    "required": false
+                }
+            }
+        },
+        "/appearance/sections/{id}/fields": {
+            "get": {
+                "operationId": "api_apiadminappearancesections_idfields_get",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Schema and current options.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "sectionId": 3,
+                                    "type": "category_carousel",
+                                    "locale": "en",
+                                    "schema": [
+                                        {
+                                            "name": "title",
+                                            "type": "text",
+                                            "label": "Title"
+                                        }
+                                    ],
+                                    "options": {
+                                        "title": "Shop by category"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Section not found."
+                    }
+                },
+                "summary": "Get the editable fields of a section",
+                "description": "Returns the schema for the section's type and the options it currently holds — staged edits when there are any, otherwise the published values.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Section ID",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "locale",
+                        "in": "query",
+                        "description": "Locale the options are read in",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        },
+                        "style": "form",
+                        "explode": true
+                    }
+                ]
+            }
+        },
+        "/appearance/sections/{id}/media": {
+            "post": {
+                "operationId": "api_apiadminappearancesections_idmedia_post",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Media stored.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "sectionId": 3,
+                                    "path": "storage/theme/3/banner.webp",
+                                    "type": "image"
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "404": {
+                        "description": "Section not found."
+                    },
+                    "422": {
+                        "description": "No file supplied.",
+                        "links": []
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    }
+                },
+                "summary": "Upload media for a section",
+                "description": "Stores one image or video against the section and returns the path to record in its options.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Section ID",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ],
+                "requestBody": {
+                    "description": "The new AdminAppearanceSectionMedia resource",
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/appearance/sections/{id}/status": {
+            "post": {
+                "operationId": "api_apiadminappearancesections_idstatus_post",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status staged.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "sectionId": 3,
+                                    "draftStatus": true,
+                                    "hasDraft": true
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Section not found."
+                    },
+                    "201": {
+                        "description": "AdminAppearanceSectionStatus resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionStatus"
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionStatus.html"
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "links": []
+                    }
+                },
+                "summary": "Stage a section on/off",
+                "description": "Stage a section on/off",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Section ID",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ],
+                "requestBody": {
+                    "description": "The new AdminAppearanceSectionStatus resource",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/appearance/themes/{code}/sections": {
+            "get": {
+                "operationId": "api_apiadminappearancethemes_codesections_get_collection",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sections of the theme.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "data": [
+                                        {
+                                            "id": 3,
+                                            "name": "Categories Collections",
+                                            "type": "category_carousel",
+                                            "themeCode": "default",
+                                            "channelId": 1,
+                                            "sortOrder": 3,
+                                            "status": 1,
+                                            "draftStatus": null,
+                                            "draftSortOrder": null,
+                                            "hasDraft": false,
+                                            "isPinned": false,
+                                            "createdAt": "2024-04-16T21:44:15+05:30",
+                                            "updatedAt": "2026-08-21T18:05:39+05:30",
+                                            "translations": [
+                                                {
+                                                    "locale": "en",
+                                                    "options": {
+                                                        "filters": {
+                                                            "sort": "asc",
+                                                            "limit": "10"
+                                                        }
+                                                    },
+                                                    "draftOptions": null
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "meta": {
+                                        "total": 1
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Theme not installed."
+                    }
+                },
+                "summary": "List the sections of a theme",
+                "description": "Sections of the given theme for one channel, in render order with footer links pinned last. Scope with `?channel=` and `?locale=`; both fall back the way the appearance editor does.",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "Theme code",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "channel",
+                        "in": "query",
+                        "description": "Channel ID (defaults to the current channel)",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "style": "form",
+                        "explode": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "query",
+                        "description": "Locale code the options are read in",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        },
+                        "style": "form",
+                        "explode": true
+                    }
+                ]
+            },
+            "post": {
+                "operationId": "api_apiadminappearancethemes_codesections_post",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Section created.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": 12,
+                                    "name": "Summer Banner",
+                                    "type": "image_carousel",
+                                    "themeCode": "default",
+                                    "channelId": 1,
+                                    "sortOrder": 4,
+                                    "status": 0,
+                                    "draftStatus": true,
+                                    "draftSortOrder": null,
+                                    "hasDraft": true,
+                                    "isPinned": false,
+                                    "createdAt": "2026-08-21T18:05:39+05:30",
+                                    "updatedAt": "2026-08-21T18:05:39+05:30",
+                                    "translations": [
+                                        {
+                                            "locale": "en",
+                                            "options": {
+                                                "images": []
+                                            },
+                                            "draftOptions": null
+                                        }
+                                    ],
+                                    "message": "Section created successfully."
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "422": {
+                        "description": "Invalid type, or the channel already has a footer links section.",
+                        "links": []
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    }
+                },
+                "summary": "Create a section",
+                "description": "Creates a section against the theme and channel the request is scoped to. It is created switched off with a pending status draft, exactly as the appearance editor does, so an empty section is never put in front of shoppers before it is built.",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "Theme code",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "channel",
+                        "in": "query",
+                        "description": "Channel ID (defaults to the current channel)",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "style": "form",
+                        "explode": true
+                    }
+                ],
+                "requestBody": {
+                    "description": "The new AdminAppearanceSection resource",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Summer Banner"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "image_carousel",
+                                            "product_carousel",
+                                            "category_carousel",
+                                            "footer_links",
+                                            "static_content",
+                                            "services_content"
+                                        ],
+                                        "example": "image_carousel"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/appearance/themes/{code}/sections/discard": {
+            "post": {
+                "operationId": "api_apiadminappearancethemes_codesectionsdiscard_post",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Staged edits discarded.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "themeCode": "default",
+                                    "channelId": 1,
+                                    "sectionIds": [
+                                        3,
+                                        5
+                                    ],
+                                    "message": "Section changes discarded successfully."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Theme not installed."
+                    },
+                    "201": {
+                        "description": "AdminAppearanceSectionDiscard resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionDiscard"
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionDiscard.html"
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "links": []
+                    }
+                },
+                "summary": "Discard staged section edits",
+                "description": "Discard staged section edits",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "Theme code",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "channel",
+                        "in": "query",
+                        "description": "Channel ID (defaults to the current channel)",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "style": "form",
+                        "explode": true
+                    }
+                ],
+                "requestBody": {
+                    "description": "Optional. The channel to act on; the current channel is used when it is omitted.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "channel": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                }
+                            },
+                            "example": {
+                                "channel": 1
+                            }
+                        }
+                    },
+                    "required": false
+                }
+            }
+        },
+        "/appearance/themes/{code}/sections/preview": {
+            "get": {
+                "operationId": "api_apiadminappearancethemes_codesectionspreview_get",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The drafted sections.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "themeCode": "default",
+                                    "channelId": 1,
+                                    "locale": "en",
+                                    "sections": [
+                                        {
+                                            "id": 3,
+                                            "name": "Categories Collections",
+                                            "type": "category_carousel",
+                                            "sortOrder": 1,
+                                            "status": true,
+                                            "hasDraft": true,
+                                            "options": {
+                                                "title": "Shop by category"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Theme not installed."
+                    }
+                },
+                "summary": "Preview a theme with staged edits applied",
+                "description": "The sections a channel would draw if the staged edits were published: draft options replace published ones, draft status and order are applied, sections switched off are left out, and footer links stay last.",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "Theme code",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "channel",
+                        "in": "query",
+                        "description": "Channel ID (defaults to the current channel)",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "style": "form",
+                        "explode": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "query",
+                        "description": "Locale the options are read in",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        },
+                        "style": "form",
+                        "explode": true
+                    }
+                ]
+            }
+        },
+        "/appearance/themes/{code}/sections/publish": {
+            "post": {
+                "operationId": "api_apiadminappearancethemes_codesectionspublish_post",
+                "tags": [
+                    "Admin Appearance: Sections"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Staged edits published.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "themeCode": "default",
+                                    "channelId": 1,
+                                    "sectionIds": [
+                                        3,
+                                        5
+                                    ],
+                                    "message": "Section changes published successfully."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Theme not installed."
+                    },
+                    "201": {
+                        "description": "AdminAppearanceSectionPublish resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionPublish"
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceSectionPublish.html"
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "links": []
+                    }
+                },
+                "summary": "Publish staged section edits",
+                "description": "Publish staged section edits",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "Theme code",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "channel",
+                        "in": "query",
+                        "description": "Channel ID (defaults to the current channel)",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "style": "form",
+                        "explode": true
+                    }
+                ],
+                "requestBody": {
+                    "description": "Optional. The channel to act on; the current channel is used when it is omitted.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "channel": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                }
+                            },
+                            "example": {
+                                "channel": 1
+                            }
+                        }
+                    },
+                    "required": false
+                }
+            }
+        },
+        "/appearance/themes": {
+            "get": {
+                "operationId": "api_apiadminappearancethemes_get_collection",
+                "tags": [
+                    "Admin Appearance: Themes"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The theme gallery.",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "code": "default",
+                                        "name": "Default",
+                                        "author": "Bagisto",
+                                        "version": "2.4.10",
+                                        "url": null,
+                                        "demoUrl": null,
+                                        "screenshot": "http://localhost:8000/themes/admin/default/images/default.png",
+                                        "rating": null,
+                                        "tags": [],
+                                        "description": "The theme Bagisto ships with.",
+                                        "isInstalled": true,
+                                        "status": "active",
+                                        "activeOn": [
+                                            {
+                                                "id": 1,
+                                                "name": "Default"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "List themes",
+                "description": "Every theme this installation knows about — installed ones and the ones available to install — with the channels each is active on. Active themes come first.",
+                "parameters": []
+            }
+        },
+        "/appearance/themes/{code}": {
+            "get": {
+                "operationId": "api_apiadminappearancethemes_code_get",
+                "tags": [
+                    "Admin Appearance: Themes"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The theme.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "code": "default",
+                                    "name": "Default",
+                                    "author": "Bagisto",
+                                    "version": "2.4.10",
+                                    "url": null,
+                                    "demoUrl": null,
+                                    "screenshot": "http://localhost:8000/themes/admin/default/images/default.png",
+                                    "rating": null,
+                                    "tags": [],
+                                    "description": "The theme Bagisto ships with.",
+                                    "isInstalled": true,
+                                    "status": "active",
+                                    "activeOn": [
+                                        {
+                                            "id": 1,
+                                            "name": "Default"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Theme not found."
+                    }
+                },
+                "summary": "Get a theme",
+                "description": "Get a theme",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "Theme code",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ]
+            }
+        },
+        "/appearance/themes/{code}/activate": {
+            "post": {
+                "operationId": "api_apiadminappearancethemes_codeactivate_post",
+                "tags": [
+                    "Admin Appearance: Themes"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Theme activated.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "code": "default",
+                                    "activatedOn": [
+                                        {
+                                            "id": 1,
+                                            "name": "Default"
+                                        }
+                                    ],
+                                    "message": "Theme activated successfully."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Theme not found or not installed."
+                    },
+                    "422": {
+                        "description": "Missing or unknown channel IDs.",
+                        "links": []
+                    },
+                    "201": {
+                        "description": "AdminAppearanceThemeActivate resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceThemeActivate"
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdminAppearanceThemeActivate.html"
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    }
+                },
+                "summary": "Activate a theme on channels",
+                "description": "Points the given channels at the theme. Sections belonging to a channel's previous theme are left in place but stop being drawn — call the impact endpoint first to see what that affects.",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "Theme code",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ],
+                "requestBody": {
+                    "description": "The new AdminAppearanceThemeActivate resource",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "channelIds"
+                                ],
+                                "properties": {
+                                    "channelIds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/appearance/themes/{code}/impact": {
+            "get": {
+                "operationId": "api_apiadminappearancethemes_codeimpact_get",
+                "tags": [
+                    "Admin Appearance: Themes"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The impact report.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "code": "velocity",
+                                    "impact": [
+                                        {
+                                            "channelId": 1,
+                                            "channel": "Default",
+                                            "currentTheme": "Default",
+                                            "customizations": 6
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Theme not found."
+                    },
+                    "422": {
+                        "description": "Missing or unknown channel IDs."
+                    }
+                },
+                "summary": "Report what activating a theme would leave behind",
+                "description": "Lists the channels that already hold sections built for their current theme, with how many. A channel whose sections would survive is not listed.",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "Theme code being activated",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "channel_ids[]",
+                        "in": "query",
+                        "description": "Channel IDs the theme would be applied to",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        },
+                        "style": "form",
+                        "explode": true
+                    }
+                ]
+            }
+        },
         "/get": {
             "get": {
                 "operationId": "api_apiadminget_get_collection",
@@ -1165,7 +2643,7 @@
                         }
                     },
                     "400": {
-                        "description": "Cannot delete — last family or products attached.",
+                        "description": "Cannot delete — the default family, or products attached.",
                         "content": {
                             "application/json": {
                                 "example": {
@@ -1190,7 +2668,7 @@
                     }
                 },
                 "summary": "Delete an attribute family",
-                "description": "Refuses if this is the last family (HTTP 400) or if any product is using it (HTTP 400).",
+                "description": "Refuses the default family (HTTP 400), which backs every product form, and any family a product is using (HTTP 400).",
                 "parameters": [
                     {
                         "name": "id",
@@ -5272,7 +6750,8 @@
                                     "productId": 12,
                                     "path": "product/12/abc123.webp",
                                     "position": 1,
-                                    "url": "/storage/product/12/abc123.webp"
+                                    "url": "/storage/product/12/abc123.webp",
+                                    "altText": "Blue running shoe, side view"
                                 }
                             }
                         },
@@ -5291,7 +6770,7 @@
                     }
                 },
                 "summary": "Upload a product image",
-                "description": "Uploads a new image for the given product. Send as multipart/form-data with `image` containing the file (allowed mime types: bmp, jpeg, jpg, png, webp).",
+                "description": "Uploads a new image for the given product. Send as multipart/form-data with `image` containing the file (allowed mime types: bmp, jpeg, jpg, png, webp). Optional `alt_text` is stored for every locale the request covers.",
                 "parameters": [
                     {
                         "name": "productId",
@@ -5324,6 +6803,10 @@
                                     "position": {
                                         "type": "integer",
                                         "example": 1
+                                    },
+                                    "alt_text": {
+                                        "type": "string",
+                                        "example": "Blue running shoe, side view"
                                     }
                                 }
                             }
@@ -5441,6 +6924,92 @@
             }
         },
         "/catalog/products/{productId}/images/{id}": {
+            "put": {
+                "operationId": "api_apiadmincatalogproducts_productIdimages_id_put",
+                "tags": [
+                    "Admin Catalog: Products"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Image updated.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": 47,
+                                    "productId": 12,
+                                    "path": "product/12/abc123.webp",
+                                    "position": 2,
+                                    "url": "/storage/product/12/abc123.webp",
+                                    "altText": "Blue running shoe, side view"
+                                }
+                            }
+                        },
+                        "links": []
+                    },
+                    "404": {
+                        "description": "Image (or its parent product) not found."
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "links": []
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "links": []
+                    }
+                },
+                "summary": "Update a product image",
+                "description": "Edits what is stored alongside an uploaded image — its alt text and its position. The file itself is replaced by uploading a new image and deleting this one.",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "Parent product ID.",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 12
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Image ID.",
+                        "required": true,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 47
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ],
+                "requestBody": {
+                    "description": "The updated AdminCatalogProductImage resource",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "alt_text": {
+                                        "type": "string",
+                                        "example": "Blue running shoe, side view"
+                                    },
+                                    "position": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            },
             "delete": {
                 "operationId": "api_apiadmincatalogproducts_productIdimages_id_delete",
                 "tags": [
@@ -14024,7 +15593,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Paginated list in the { data, meta } envelope. indexFile / generatedSitemaps are detail-only and null on list rows.",
+                        "description": "Paginated list in the { data, meta } envelope. generatedFiles / indexFile / generatedSitemaps are detail-only and null on list rows.",
                         "content": {
                             "application/json": {
                                 "example": {
@@ -14033,7 +15602,14 @@
                                             "id": 1,
                                             "fileName": "sitemap.xml",
                                             "path": "/",
+                                            "channels": [
+                                                1
+                                            ],
+                                            "urls": [
+                                                "https://example.com/storage/sitemaps/default/sitemap-1-1.xml"
+                                            ],
                                             "generatedAt": null,
+                                            "generatedFiles": null,
                                             "indexFile": null,
                                             "generatedSitemaps": null,
                                             "createdAt": "2026-06-20T10:00:00+05:30",
@@ -14054,7 +15630,7 @@
                     }
                 },
                 "summary": "List sitemaps",
-                "description": "Filters: file_name (LIKE). Sort: id (default desc), file_name.",
+                "description": "Filters: file_name (LIKE), channel_id (exact). Sort: id (default desc), file_name.",
                 "parameters": [
                     {
                         "name": "page",
@@ -14090,6 +15666,18 @@
                         "deprecated": false,
                         "schema": {
                             "type": "string"
+                        },
+                        "style": "form",
+                        "explode": true
+                    },
+                    {
+                        "name": "channel_id",
+                        "in": "query",
+                        "description": "Only sitemaps covering this channel.",
+                        "required": false,
+                        "deprecated": false,
+                        "schema": {
+                            "type": "integer"
                         },
                         "style": "form",
                         "explode": true
@@ -14142,7 +15730,14 @@
                                     "id": 1,
                                     "fileName": "sitemap.xml",
                                     "path": "/",
+                                    "channels": [
+                                        1
+                                    ],
+                                    "urls": [
+                                        "https://example.com/storage/sitemaps/default/sitemap-1-1.xml"
+                                    ],
                                     "generatedAt": null,
+                                    "generatedFiles": [],
                                     "indexFile": null,
                                     "generatedSitemaps": [],
                                     "createdAt": "2026-06-20T10:00:00+05:30",
@@ -14172,7 +15767,8 @@
                                 "type": "object",
                                 "required": [
                                     "file_name",
-                                    "path"
+                                    "path",
+                                    "channels"
                                 ],
                                 "properties": {
                                     "file_name": {
@@ -14182,6 +15778,15 @@
                                     "path": {
                                         "type": "string",
                                         "example": "/"
+                                    },
+                                    "channels": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1
+                                        ]
                                     }
                                 }
                             }
@@ -14206,12 +15811,26 @@
                                     "id": 1,
                                     "fileName": "sitemap.xml",
                                     "path": "/",
-                                    "generatedAt": "2026-06-23T13:00:00+05:30",
-                                    "indexFile": "/sitemap.xml",
-                                    "generatedSitemaps": [
-                                        "/sitemap-products-1.xml",
-                                        "/sitemap-categories-1.xml"
+                                    "channels": [
+                                        1
                                     ],
+                                    "urls": [
+                                        "https://example.com/storage/sitemaps/default/sitemap-1-1.xml"
+                                    ],
+                                    "generatedAt": "2026-06-23T13:00:00+05:30",
+                                    "generatedFiles": [
+                                        {
+                                            "channelId": 1,
+                                            "channelCode": "default",
+                                            "hostname": "https://example.com",
+                                            "index": "sitemaps/default/sitemap-1-1.xml",
+                                            "sitemaps": [
+                                                "sitemaps/default/sitemap-1-1-1.xml"
+                                            ]
+                                        }
+                                    ],
+                                    "indexFile": null,
+                                    "generatedSitemaps": [],
                                     "createdAt": "2026-06-20T10:00:00+05:30",
                                     "updatedAt": "2026-06-23T13:05:00+05:30"
                                 }
@@ -14253,12 +15872,26 @@
                                     "id": 1,
                                     "fileName": "sitemap.xml",
                                     "path": "/",
-                                    "generatedAt": "2026-06-23T13:00:00+05:30",
-                                    "indexFile": "/sitemap.xml",
-                                    "generatedSitemaps": [
-                                        "/sitemap-products-1.xml",
-                                        "/sitemap-categories-1.xml"
+                                    "channels": [
+                                        1
                                     ],
+                                    "urls": [
+                                        "https://example.com/storage/sitemaps/default/sitemap-1-1.xml"
+                                    ],
+                                    "generatedAt": "2026-06-23T13:00:00+05:30",
+                                    "generatedFiles": [
+                                        {
+                                            "channelId": 1,
+                                            "channelCode": "default",
+                                            "hostname": "https://example.com",
+                                            "index": "sitemaps/default/sitemap-1-1.xml",
+                                            "sitemaps": [
+                                                "sitemaps/default/sitemap-1-1-1.xml"
+                                            ]
+                                        }
+                                    ],
+                                    "indexFile": null,
+                                    "generatedSitemaps": [],
                                     "createdAt": "2026-06-20T10:00:00+05:30",
                                     "updatedAt": "2026-06-23T13:05:00+05:30"
                                 }
@@ -14308,6 +15941,15 @@
                                     "path": {
                                         "type": "string",
                                         "example": "/"
+                                    },
+                                    "channels": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1
+                                        ]
                                     }
                                 }
                             }
@@ -14367,11 +16009,22 @@
                             "application/json": {
                                 "example": {
                                     "sitemapId": 1,
-                                    "indexFile": "/sitemap.xml",
-                                    "generatedSitemaps": [
-                                        "/sitemap-products-1.xml",
-                                        "/sitemap-categories-1.xml"
+                                    "generatedFiles": [
+                                        {
+                                            "channelId": 1,
+                                            "channelCode": "default",
+                                            "hostname": "https://example.com",
+                                            "index": "sitemaps/default/sitemap-1-1.xml",
+                                            "sitemaps": [
+                                                "sitemaps/default/sitemap-1-1-1.xml"
+                                            ]
+                                        }
                                     ],
+                                    "urls": [
+                                        "https://example.com/storage/sitemaps/default/sitemap-1-1.xml"
+                                    ],
+                                    "indexFile": null,
+                                    "generatedSitemaps": [],
                                     "generatedAt": "2026-06-23T13:00:00+05:30",
                                     "message": "Sitemap generated."
                                 }
@@ -23603,6 +25256,20 @@
                                         "type": "string",
                                         "example": ""
                                     },
+                                    "image_source": {
+                                        "type": "string",
+                                        "enum": [
+                                            "url",
+                                            "upload",
+                                            "directory"
+                                        ],
+                                        "example": "directory"
+                                    },
+                                    "upload_images": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "ZIP of images, required when image_source is upload."
+                                    },
                                     "file": {
                                         "type": "string",
                                         "format": "binary"
@@ -27097,547 +28764,6 @@
                 ]
             }
         },
-        "/settings/themes": {
-            "get": {
-                "operationId": "api_apiadminsettingsthemes_get_collection",
-                "tags": [
-                    "Admin Settings: Themes"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Paginated list in the { data, meta } envelope.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/AdminSettingsTheme.AdminSettingsThemeRestDto"
-                                    }
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/AdminSettingsTheme.AdminSettingsThemeRestDto.html"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "List theme customizations",
-                "description": "Paginated, filterable, sortable list of theme customizations. Returns the standard { data, meta } admin envelope.",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Page number (1-based).",
-                        "required": false,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "style": "form",
-                        "explode": true
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Items per page (default 10, max 50).",
-                        "required": false,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "style": "form",
-                        "explode": true
-                    },
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "description": "Filter by name (partial match).",
-                        "required": false,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": true
-                    },
-                    {
-                        "name": "type",
-                        "in": "query",
-                        "description": "Filter by type (exact).",
-                        "required": false,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": true
-                    },
-                    {
-                        "name": "theme_code",
-                        "in": "query",
-                        "description": "Filter by theme_code (exact).",
-                        "required": false,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": true
-                    },
-                    {
-                        "name": "channel_id",
-                        "in": "query",
-                        "description": "Filter by channel id.",
-                        "required": false,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "style": "form",
-                        "explode": true
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "description": "Filter by status (0/1).",
-                        "required": false,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "style": "form",
-                        "explode": true
-                    },
-                    {
-                        "name": "sort",
-                        "in": "query",
-                        "description": "Sort column.",
-                        "required": false,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "id",
-                                "name",
-                                "type",
-                                "sort_order",
-                                "theme_code",
-                                "channel_id",
-                                "status"
-                            ]
-                        },
-                        "style": "form",
-                        "explode": true
-                    },
-                    {
-                        "name": "order",
-                        "in": "query",
-                        "description": "Sort direction.",
-                        "required": false,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "asc",
-                                "desc"
-                            ]
-                        },
-                        "style": "form",
-                        "explode": true
-                    }
-                ]
-            },
-            "post": {
-                "operationId": "api_apiadminsettingsthemes_post",
-                "tags": [
-                    "Admin Settings: Themes"
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Theme customization created.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminSettingsTheme.AdminSettingsThemeRestDto"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminSettingsTheme.AdminSettingsThemeRestDto.html"
-                                }
-                            }
-                        },
-                        "links": []
-                    },
-                    "422": {
-                        "description": "Validation failure (missing field, invalid type, unknown channel_id).",
-                        "links": []
-                    },
-                    "400": {
-                        "description": "Invalid input",
-                        "links": []
-                    }
-                },
-                "summary": "Create a theme customization",
-                "description": "Step-1 create: name, sort_order, type, channel_id, theme_code. Per-locale `options` are configured via PUT.",
-                "parameters": [],
-                "requestBody": {
-                    "description": "The new AdminSettingsTheme resource",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "name",
-                                    "sort_order",
-                                    "type",
-                                    "channel_id",
-                                    "theme_code"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Homepage Banner"
-                                    },
-                                    "sort_order": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "type": {
-                                        "type": "string",
-                                        "enum": [
-                                            "product_carousel",
-                                            "category_carousel",
-                                            "static_content",
-                                            "image_carousel",
-                                            "footer_links",
-                                            "services_content"
-                                        ],
-                                        "example": "image_carousel"
-                                    },
-                                    "channel_id": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "theme_code": {
-                                        "type": "string",
-                                        "example": "default"
-                                    },
-                                    "status": {
-                                        "type": "boolean",
-                                        "example": true
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "required": true
-                }
-            }
-        },
-        "/settings/themes/mass-delete": {
-            "post": {
-                "operationId": "api_apiadminsettingsthemesmass-delete_post",
-                "tags": [
-                    "Admin Settings: Themes"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Themes deleted.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminSettingsThemeMassDelete"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminSettingsThemeMassDelete.html"
-                                }
-                            }
-                        },
-                        "links": []
-                    },
-                    "422": {
-                        "description": "Empty indices.",
-                        "links": []
-                    },
-                    "400": {
-                        "description": "Invalid input",
-                        "links": []
-                    }
-                },
-                "summary": "Mass delete theme customizations",
-                "description": "Mass delete theme customizations",
-                "parameters": [],
-                "requestBody": {
-                    "description": "The new AdminSettingsThemeMassDelete resource",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "indices"
-                                ],
-                                "properties": {
-                                    "indices": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "integer"
-                                        },
-                                        "example": [
-                                            3,
-                                            4
-                                        ]
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "required": true
-                }
-            }
-        },
-        "/settings/themes/mass-update-status": {
-            "post": {
-                "operationId": "api_apiadminsettingsthemesmass-update-status_post",
-                "tags": [
-                    "Admin Settings: Themes"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Statuses updated.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminSettingsThemeMassUpdateStatus"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminSettingsThemeMassUpdateStatus.html"
-                                }
-                            }
-                        },
-                        "links": []
-                    },
-                    "422": {
-                        "description": "Invalid input.",
-                        "links": []
-                    },
-                    "400": {
-                        "description": "Invalid input",
-                        "links": []
-                    }
-                },
-                "summary": "Mass update status of theme customizations",
-                "description": "Mass update status of theme customizations",
-                "parameters": [],
-                "requestBody": {
-                    "description": "The new AdminSettingsThemeMassUpdateStatus resource",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "indices",
-                                    "value"
-                                ],
-                                "properties": {
-                                    "indices": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "integer"
-                                        },
-                                        "example": [
-                                            3,
-                                            4
-                                        ]
-                                    },
-                                    "value": {
-                                        "type": "integer",
-                                        "enum": [
-                                            0,
-                                            1
-                                        ],
-                                        "example": 1
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "required": true
-                }
-            }
-        },
-        "/settings/themes/{id}": {
-            "get": {
-                "operationId": "api_apiadminsettingsthemes_id_get",
-                "tags": [
-                    "Admin Settings: Themes"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Single theme row with per-locale translations inlined.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminSettingsTheme.AdminSettingsThemeRestDto"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminSettingsTheme.AdminSettingsThemeRestDto.html"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Theme not found."
-                    }
-                },
-                "summary": "Theme customization detail",
-                "description": "Theme customization detail",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Theme customization ID.",
-                        "required": true,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "style": "simple",
-                        "explode": false
-                    }
-                ]
-            },
-            "put": {
-                "operationId": "api_apiadminsettingsthemes_id_put",
-                "tags": [
-                    "Admin Settings: Themes"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Theme updated.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminSettingsTheme"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminSettingsTheme.html"
-                                }
-                            }
-                        },
-                        "links": []
-                    },
-                    "404": {
-                        "description": "Theme not found."
-                    },
-                    "422": {
-                        "description": "Validation failure.",
-                        "links": []
-                    },
-                    "400": {
-                        "description": "Invalid input",
-                        "links": []
-                    }
-                },
-                "summary": "Update a theme customization",
-                "description": "Updates a theme customization. Pass `locale` + `options` to write per-locale options.",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Theme customization ID.",
-                        "required": true,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "style": "simple",
-                        "explode": false
-                    }
-                ],
-                "requestBody": {
-                    "description": "The updated AdminSettingsTheme resource",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "sort_order": {
-                                        "type": "integer"
-                                    },
-                                    "type": {
-                                        "type": "string"
-                                    },
-                                    "channel_id": {
-                                        "type": "integer"
-                                    },
-                                    "theme_code": {
-                                        "type": "string"
-                                    },
-                                    "status": {
-                                        "type": "boolean"
-                                    },
-                                    "locale": {
-                                        "type": "string",
-                                        "example": "en"
-                                    },
-                                    "options": {
-                                        "type": "object"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "required": true
-                }
-            },
-            "delete": {
-                "operationId": "api_apiadminsettingsthemes_id_delete",
-                "tags": [
-                    "Admin Settings: Themes"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Theme deleted."
-                    },
-                    "404": {
-                        "description": "Theme not found."
-                    }
-                },
-                "summary": "Delete a theme customization",
-                "description": "Delete a theme customization",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Theme customization ID.",
-                        "required": true,
-                        "deprecated": false,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "style": "simple",
-                        "explode": false
-                    }
-                ]
-            }
-        },
         "/settings/users": {
             "get": {
                 "operationId": "api_apiadminsettingsusers_get_collection",
@@ -28863,6 +29989,448 @@
     },
     "components": {
         "schemas": {
+            "AdminAppearanceSectionDiscard": {
+                "type": "object",
+                "description": "Throws away every staged edit of a theme and channel, leaving the published content.",
+                "properties": {
+                    "themeCode": {
+                        "readOnly": true,
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "channelId": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "sectionIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionDiscard.html": {
+                "type": "object",
+                "description": "Throws away every staged edit of a theme and channel, leaving the published content.",
+                "properties": {
+                    "themeCode": {
+                        "readOnly": true,
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "channelId": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "sectionIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionDraft": {
+                "type": "object",
+                "description": "Unpublished edits for one section and locale, held until the theme is published.",
+                "properties": {
+                    "sectionId": {
+                        "readOnly": true,
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "locale": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "hasDraft": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionDraft.html": {
+                "type": "object",
+                "description": "Unpublished edits for one section and locale, held until the theme is published.",
+                "properties": {
+                    "sectionId": {
+                        "readOnly": true,
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "locale": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "hasDraft": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionDuplicate": {
+                "type": "object",
+                "properties": {
+                    "sectionId": {
+                        "readOnly": true,
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "sourceId": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "name": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "type": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionDuplicate.html": {
+                "type": "object",
+                "properties": {
+                    "sectionId": {
+                        "readOnly": true,
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "sourceId": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "name": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "type": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionPublish": {
+                "type": "object",
+                "description": "Promotes every staged edit of a theme and channel to what the storefront draws.",
+                "properties": {
+                    "themeCode": {
+                        "readOnly": true,
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "channelId": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "sectionIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionPublish.html": {
+                "type": "object",
+                "description": "Promotes every staged edit of a theme and channel to what the storefront draws.",
+                "properties": {
+                    "themeCode": {
+                        "readOnly": true,
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "channelId": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "sectionIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionReorder": {
+                "type": "object",
+                "description": "Render order is staged like any other edit. Footer links are always drawn last, so\nthey are moved back to the end of whatever order is sent.",
+                "properties": {
+                    "id": {
+                        "readOnly": true,
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "sectionIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "hasDraft": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "boolean"
+                        }
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionReorder.html": {
+                "type": "object",
+                "description": "Render order is staged like any other edit. Footer links are always drawn last, so\nthey are moved back to the end of whatever order is sent.",
+                "properties": {
+                    "id": {
+                        "readOnly": true,
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "sectionIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "hasDraft": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "boolean"
+                        }
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionStatus": {
+                "type": "object",
+                "description": "Switching a section on or off is staged like any other edit, so the storefront only\nchanges once the theme is published.",
+                "properties": {
+                    "sectionId": {
+                        "readOnly": true,
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "draftStatus": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "hasDraft": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceSectionStatus.html": {
+                "type": "object",
+                "description": "Switching a section on or off is staged like any other edit, so the storefront only\nchanges once the theme is published.",
+                "properties": {
+                    "sectionId": {
+                        "readOnly": true,
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "draftStatus": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "hasDraft": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceThemeActivate": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "readOnly": true,
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "activatedOn": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "AdminAppearanceThemeActivate.html": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "readOnly": true,
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "activatedOn": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
             "AdminCancelOrder.OrderDetailRestDto": {
                 "type": "object",
                 "description": "Admin Cancel Order — POST /api/admin/orders/{id}/cancel\n(GraphQL: createAdminCancelOrder).\n\nThe mutation returns the updated `OrderDetail` shape directly so the client\ncan refresh the order-view screen without a follow-up GET.",
@@ -36000,6 +37568,22 @@
                             "null"
                         ]
                     },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "errorFilePath": {
                         "readOnly": true,
                         "type": [
@@ -36215,6 +37799,22 @@
                     "imagesDirectoryPath": {
                         "readOnly": true,
                         "example": "product/images",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
                         "type": [
                             "string",
                             "null"
@@ -36453,6 +38053,22 @@
                             "null"
                         ]
                     },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "errorFilePath": {
                         "readOnly": true,
                         "type": [
@@ -36668,6 +38284,22 @@
                     "imagesDirectoryPath": {
                         "readOnly": true,
                         "example": "product/images",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
                         "type": [
                             "string",
                             "null"
@@ -36893,6 +38525,22 @@
                             "null"
                         ]
                     },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "errorFilePath": {
                         "readOnly": true,
                         "type": [
@@ -37108,6 +38756,22 @@
                     "imagesDirectoryPath": {
                         "readOnly": true,
                         "example": "product/images",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
                         "type": [
                             "string",
                             "null"
@@ -37333,6 +38997,22 @@
                             "null"
                         ]
                     },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "errorFilePath": {
                         "readOnly": true,
                         "type": [
@@ -37548,6 +39228,22 @@
                     "imagesDirectoryPath": {
                         "readOnly": true,
                         "example": "product/images",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
                         "type": [
                             "string",
                             "null"
@@ -37773,6 +39469,22 @@
                             "null"
                         ]
                     },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "errorFilePath": {
                         "readOnly": true,
                         "type": [
@@ -37988,6 +39700,22 @@
                     "imagesDirectoryPath": {
                         "readOnly": true,
                         "example": "product/images",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
                         "type": [
                             "string",
                             "null"
@@ -38213,6 +39941,22 @@
                             "null"
                         ]
                     },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "errorFilePath": {
                         "readOnly": true,
                         "type": [
@@ -38428,6 +40172,22 @@
                     "imagesDirectoryPath": {
                         "readOnly": true,
                         "example": "product/images",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imageSource": {
+                        "readOnly": true,
+                        "description": "Where a product import reads its images from: url, upload or directory.",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "imagesArchiveName": {
+                        "readOnly": true,
+                        "description": "Name of the images archive uploaded for this import, when its images came from an upload.",
                         "type": [
                             "string",
                             "null"
@@ -39955,436 +41715,6 @@
                     }
                 }
             },
-            "AdminSettingsTheme": {
-                "type": "object",
-                "description": "Admin Settings → Themes (theme customizations).\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Settings\\ThemeController.\n\nBagisto \"Themes\" are per-channel theme customization blocks (image carousels,\nstatic content, footer links, etc.) — NOT a registry of installable themes.\nEach row picks a `type` from a fixed set and stores arbitrary per-locale\n`options` JSON via translation rows.\n\nREST:\n  GET    /api/admin/settings/themes\n  GET    /api/admin/settings/themes/{id}\n  POST   /api/admin/settings/themes\n  PUT    /api/admin/settings/themes/{id}\n  DELETE /api/admin/settings/themes/{id}\n\nGraphQL: adminSettingsThemes, adminSettingsTheme,\n         createAdminSettingsTheme, updateAdminSettingsTheme,\n         deleteAdminSettingsTheme\n\nDeferred (v1):\n  - Image uploads under `options.images[*].image` / `options.services[*].service_icon`\n    and the `static_content` inline image-pick action. Accept path strings only.\n  - The two-step admin upload flow (`store` with `id` param + multipart) — not exposed.",
-                "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": "integer"
-                    },
-                    "themeCode": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "type": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "sortOrder": {
-                        "type": "integer"
-                    },
-                    "status": {
-                        "type": "boolean"
-                    },
-                    "channelId": {
-                        "type": "integer"
-                    },
-                    "createdAt": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "updatedAt": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "message": {
-                        "type": "string"
-                    },
-                    "translations": {
-                        "readOnly": true,
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "iri-reference",
-                            "example": "https://example.com/"
-                        }
-                    }
-                }
-            },
-            "AdminSettingsTheme.AdminSettingsThemeRestDto": {
-                "type": "object",
-                "description": "Admin Settings → Themes (theme customizations).\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Settings\\ThemeController.\n\nBagisto \"Themes\" are per-channel theme customization blocks (image carousels,\nstatic content, footer links, etc.) — NOT a registry of installable themes.\nEach row picks a `type` from a fixed set and stores arbitrary per-locale\n`options` JSON via translation rows.\n\nREST:\n  GET    /api/admin/settings/themes\n  GET    /api/admin/settings/themes/{id}\n  POST   /api/admin/settings/themes\n  PUT    /api/admin/settings/themes/{id}\n  DELETE /api/admin/settings/themes/{id}\n\nGraphQL: adminSettingsThemes, adminSettingsTheme,\n         createAdminSettingsTheme, updateAdminSettingsTheme,\n         deleteAdminSettingsTheme\n\nDeferred (v1):\n  - Image uploads under `options.images[*].image` / `options.services[*].service_icon`\n    and the `static_content` inline image-pick action. Accept path strings only.\n  - The two-step admin upload flow (`store` with `id` param + multipart) — not exposed.",
-                "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "name": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "type": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "sortOrder": {
-                        "readOnly": true,
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "status": {
-                        "readOnly": true,
-                        "type": [
-                            "boolean",
-                            "null"
-                        ]
-                    },
-                    "channelId": {
-                        "readOnly": true,
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "themeCode": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "translations": {
-                        "readOnly": true,
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "items": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "anyOf": [
-                                    {
-                                        "type": "array",
-                                        "items": {
-                                            "type": [
-                                                "string",
-                                                "null"
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "null"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    "createdAt": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "updatedAt": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    }
-                }
-            },
-            "AdminSettingsTheme.AdminSettingsThemeRestDto.html": {
-                "type": "object",
-                "description": "Admin Settings → Themes (theme customizations).\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Settings\\ThemeController.\n\nBagisto \"Themes\" are per-channel theme customization blocks (image carousels,\nstatic content, footer links, etc.) — NOT a registry of installable themes.\nEach row picks a `type` from a fixed set and stores arbitrary per-locale\n`options` JSON via translation rows.\n\nREST:\n  GET    /api/admin/settings/themes\n  GET    /api/admin/settings/themes/{id}\n  POST   /api/admin/settings/themes\n  PUT    /api/admin/settings/themes/{id}\n  DELETE /api/admin/settings/themes/{id}\n\nGraphQL: adminSettingsThemes, adminSettingsTheme,\n         createAdminSettingsTheme, updateAdminSettingsTheme,\n         deleteAdminSettingsTheme\n\nDeferred (v1):\n  - Image uploads under `options.images[*].image` / `options.services[*].service_icon`\n    and the `static_content` inline image-pick action. Accept path strings only.\n  - The two-step admin upload flow (`store` with `id` param + multipart) — not exposed.",
-                "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "name": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "type": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "sortOrder": {
-                        "readOnly": true,
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "status": {
-                        "readOnly": true,
-                        "type": [
-                            "boolean",
-                            "null"
-                        ]
-                    },
-                    "channelId": {
-                        "readOnly": true,
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "themeCode": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "translations": {
-                        "readOnly": true,
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "items": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "anyOf": [
-                                    {
-                                        "type": "array",
-                                        "items": {
-                                            "type": [
-                                                "string",
-                                                "null"
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "null"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    "createdAt": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "updatedAt": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    }
-                }
-            },
-            "AdminSettingsTheme.html": {
-                "type": "object",
-                "description": "Admin Settings → Themes (theme customizations).\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Settings\\ThemeController.\n\nBagisto \"Themes\" are per-channel theme customization blocks (image carousels,\nstatic content, footer links, etc.) — NOT a registry of installable themes.\nEach row picks a `type` from a fixed set and stores arbitrary per-locale\n`options` JSON via translation rows.\n\nREST:\n  GET    /api/admin/settings/themes\n  GET    /api/admin/settings/themes/{id}\n  POST   /api/admin/settings/themes\n  PUT    /api/admin/settings/themes/{id}\n  DELETE /api/admin/settings/themes/{id}\n\nGraphQL: adminSettingsThemes, adminSettingsTheme,\n         createAdminSettingsTheme, updateAdminSettingsTheme,\n         deleteAdminSettingsTheme\n\nDeferred (v1):\n  - Image uploads under `options.images[*].image` / `options.services[*].service_icon`\n    and the `static_content` inline image-pick action. Accept path strings only.\n  - The two-step admin upload flow (`store` with `id` param + multipart) — not exposed.",
-                "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": "integer"
-                    },
-                    "themeCode": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "type": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "sortOrder": {
-                        "type": "integer"
-                    },
-                    "status": {
-                        "type": "boolean"
-                    },
-                    "channelId": {
-                        "type": "integer"
-                    },
-                    "createdAt": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "updatedAt": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "message": {
-                        "type": "string"
-                    },
-                    "translations": {
-                        "readOnly": true,
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "iri-reference",
-                            "example": "https://example.com/"
-                        }
-                    }
-                }
-            },
-            "AdminSettingsThemeMassDelete": {
-                "type": "object",
-                "description": "Mass-delete admin settings theme customizations.\n\nREST:    POST /api/admin/settings/themes/mass-delete\nGraphQL: createAdminSettingsThemeMassDelete\n\nMirrors Bagisto admin ThemeController::massDestroy. Non-existent IDs are\nsilently skipped (matches monolith — best-effort loop).",
-                "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "deleted": {
-                        "readOnly": true,
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "items": {
-                            "type": "integer"
-                        }
-                    },
-                    "message": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    }
-                }
-            },
-            "AdminSettingsThemeMassDelete.html": {
-                "type": "object",
-                "description": "Mass-delete admin settings theme customizations.\n\nREST:    POST /api/admin/settings/themes/mass-delete\nGraphQL: createAdminSettingsThemeMassDelete\n\nMirrors Bagisto admin ThemeController::massDestroy. Non-existent IDs are\nsilently skipped (matches monolith — best-effort loop).",
-                "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "deleted": {
-                        "readOnly": true,
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "items": {
-                            "type": "integer"
-                        }
-                    },
-                    "message": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    }
-                }
-            },
-            "AdminSettingsThemeMassUpdateStatus": {
-                "type": "object",
-                "description": "Mass-update status admin settings theme customizations.\n\nREST:    POST /api/admin/settings/themes/mass-update-status\nGraphQL: createAdminSettingsThemeMassUpdateStatus\n\nMirrors Bagisto admin ThemeController::massUpdate which calls\nThemeCustomizationRepository::massUpdateStatus.",
-                "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "updated": {
-                        "readOnly": true,
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "items": {
-                            "type": "integer"
-                        }
-                    },
-                    "message": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    }
-                }
-            },
-            "AdminSettingsThemeMassUpdateStatus.html": {
-                "type": "object",
-                "description": "Mass-update status admin settings theme customizations.\n\nREST:    POST /api/admin/settings/themes/mass-update-status\nGraphQL: createAdminSettingsThemeMassUpdateStatus\n\nMirrors Bagisto admin ThemeController::massUpdate which calls\nThemeCustomizationRepository::massUpdateStatus.",
-                "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "updated": {
-                        "readOnly": true,
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "items": {
-                            "type": "integer"
-                        }
-                    },
-                    "message": {
-                        "readOnly": true,
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    }
-                }
-            },
             "AdminSettingsUser": {
                 "type": "object",
                 "description": "Admin Settings → Users (admins) endpoints (Block B Wave 2).\n\nREST:\n  GET    /api/admin/settings/users\n  GET    /api/admin/settings/users/{id}\n  POST   /api/admin/settings/users\n  PUT    /api/admin/settings/users/{id}\n  DELETE /api/admin/settings/users/{id}\n\nGraphQL: adminSettingsUsers, adminSettingsUser,\n         createAdminSettingsUser, updateAdminSettingsUser,\n         deleteAdminSettingsUser\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Settings\\UserController.\n\nNotes:\n - image upload is intentionally deferred in v1 — accepts a path string only.\n - Delete refuses if the admin is deleting themselves (400) or if this is\n   the last admin (400).\n - Password is required on create; optional on update (re-hashed if present).",
@@ -41009,168 +42339,130 @@
     ],
     "tags": [
         {
-            "name": "Admin Catalog: Attributes",
-            "description": "Sub-resource for attribute options.\n\nREST:\n  POST   /api/admin/catalog/attributes/{attributeId}/options\n  PUT    /api/admin/catalog/attributes/{attributeId}/options/{optionId}\n  DELETE /api/admin/catalog/attributes/{attributeId}/options/{optionId}\n\nGraphQL:\n  createAdminCatalogAttributeOption\n  updateAdminCatalogAttributeOption\n  deleteAdminCatalogAttributeOption\n\nSuccess response shape: same full attribute detail as GET /api/admin/catalog/attributes/{id}\n(AdminAttribute DTO via AdminAttributeItemProvider::mapToDtoPublic).\n\nDelete returns: { \"message\": \"...\" }"
+            "name": "Admin Appearance: Sections"
         },
         {
-            "name": "Admin Catalog: Attribute Families",
-            "description": "Admin Catalog → Attribute Families endpoints.\n\nPhase 1.5 (read):\n  GET    /api/admin/catalog/families          datagrid-parity listing\n  GET    /api/admin/catalog/families/{id}     detail with attribute groups\n\nPhase 4 (CRUD):\n  POST   /api/admin/catalog/families          create\n  PUT    /api/admin/catalog/families/{id}     update\n  DELETE /api/admin/catalog/families/{id}     delete\n\nGraphQL mutations (Phase 4): createAdminAttributeFamily / updateAdminAttributeFamily / deleteAdminAttributeFamily."
+            "name": "Admin Appearance: Themes"
         },
         {
-            "name": "Admin Sales: Bookings",
-            "description": "Resource 'Admin Sales: Bookings' operations."
+            "name": "Admin Catalog: Attributes"
         },
         {
-            "name": "Admin Sales: Orders",
-            "description": "Admin Order detail — connection-shape resource (2026-06-18).\n\nBare Eloquent model on the `orders` table (NOT extending core Order, which\ncarries morphTo/proxy relations that break API Platform serialization —\nsame reason the shop CustomerOrder is bare). Nested data follows the proven\nAdminReview recipe:\n  - to-many (items / invoices / shipments / refunds / comments) → HasMany to\n    Eloquent sub-resources → GraphQL connections (`items { edges { node } }`).\n  - to-one (customer / billingAddress / shippingAddress) → BelongsTo/HasOne\n    to Eloquent sub-resources → typed objects the client sub-selects.\n  - top-level scalars + formatted strings resolve via snake_case columns and\n    accessors through the central output converter (no AcceptsCamelCaseWrites).\n\nREST keeps the historical flat shape via `output: OrderDetailRestDto` (the\nprovider maps it); GraphQL ops carry no `output:` so they return THIS model\nand serve connections. The provider branches on the GraphQL context."
+            "name": "Admin Catalog: Attribute Families"
         },
         {
-            "name": "Admin: Customer Order creation",
-            "description": "Resource 'Admin: Customer Order creation' operations."
+            "name": "Admin Sales: Bookings"
         },
         {
-            "name": "Admin Catalog: Products",
-            "description": "Admin Catalog Product videos sub-resource (mirrors AdminCatalogProductImage).\n\n  POST   /api/admin/catalog/products/{productId}/videos       upload (multipart `video`)\n  DELETE /api/admin/catalog/products/{productId}/videos/{id}  remove DB row + file\n\nBinary upload is REST-only; the GraphQL create mutation is a placeholder that\nrejects with 422. GraphQL delete works. Permission: catalog.products.edit."
+            "name": "Admin Sales: Orders"
         },
         {
-            "name": "Admin Catalog: Categories",
-            "description": "Admin Catalog → Categories tree.\n\nREST: GET /api/admin/catalog/categories/tree\n\nReturns the full nested category tree. Each node carries the same scalar\nshape as the flat listing plus `children: [...]` (empty array for leaves).\nNo envelope — the response body is a JSON array of root nodes (typically\none — the system root — but multi-root installs work too).\n\nUses Kalnoy\\Nestedset's `toTree()` for the hierarchy build."
+            "name": "Admin: Customer Order creation"
         },
         {
-            "name": "Admin CMS",
-            "description": "One-operation resource for mass-deleting CMS pages.\n\nREST:\n  POST /api/admin/cms/pages/mass-delete\n    Body: { \"indices\": [12, 18] }\n    200:  { \"deleted\": [12, 18], \"message\": \"...\" }\n\nGraphQL:\n  createAdminCmsPageMassDelete"
+            "name": "Admin Catalog: Products"
         },
         {
-            "name": "Admin Configuration",
-            "description": "Admin Configuration values — returns the effective values map for a slug.\n\nREST   : GET /api/admin/configuration?slug=<section>.<group>\nGraphQL: adminConfigurationValues(slug:, channel:, locale:)\n\n`slug` is required (anti-foot-gun — would otherwise dump the whole\ncore_config table). Channel/locale resolution falls back to the current\nrequest's channel/locale per `core()->getConfigData()` semantics."
+            "name": "Admin Catalog: Categories"
         },
         {
-            "name": "Admin Customers",
-            "description": "Customer's wishlist — the right-sidebar \"Wishlist Items\" panel on the\nCreate-Order screen. Read-only."
+            "name": "Admin CMS"
         },
         {
-            "name": "Admin Customer GDPR",
-            "description": "Admin Customer GDPR Requests — read / status-update / delete.\n\nREST:\n  GET    /api/admin/customers/gdpr-requests\n  GET    /api/admin/customers/gdpr-requests/{id}\n  PUT    /api/admin/customers/gdpr-requests/{id}\n  DELETE /api/admin/customers/gdpr-requests/{id}\n\nGraphQL: adminCustomerGdprRequests, adminCustomerGdprRequest,\n         updateAdminCustomerGdprRequest, deleteAdminCustomerGdprRequest\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Customers\\GDPRController. The admin\npanel's only writes are status update + delete; the destructive cascade for\ntype=delete requests happens via the separate /process action (see\nAdminCustomerGdprProcess) — matches what the customer-facing side does on\napproval but exposes it as an explicit endpoint for API integrators."
+            "name": "Admin Configuration"
         },
         {
-            "name": "Admin Customer Groups",
-            "description": "Resource 'Admin Customer Groups' operations."
+            "name": "Admin Customers"
         },
         {
-            "name": "Admin Customer Reviews",
-            "description": "Resource 'Admin Customer Reviews' operations."
+            "name": "Admin Customer GDPR"
         },
         {
-            "name": "Admin Dashboard",
-            "description": "Admin dashboard statistics (read-only).\n\nREST   : GET /api/admin/dashboard/stats\nGraphQL: adminDashboardStats query\n\nMirrors `Webkul\\Admin\\Http\\Controllers\\DashboardController::stats()`.\nThe `type` query param selects which named stat group is returned by\nthe `Webkul\\Admin\\Helpers\\Dashboard` helper:\n\n  over-all (default), today, stock-threshold-products, total-sales,\n  total-visitors, top-selling-products, top-customers\n\n`start` / `end` (ISO dates) and `channel` (channel code) narrow the\nwindow; the helper falls back to \"last 30 days\" when omitted."
+            "name": "Admin Customer Groups"
         },
         {
-            "name": "Admin Sales: EU Withdrawal",
-            "description": "Resource 'Admin Sales: EU Withdrawal' operations."
+            "name": "Admin Customer Reviews"
         },
         {
-            "name": "Admin Sales: Invoices",
-            "description": "Resource 'Admin Sales: Invoices' operations."
+            "name": "Admin Dashboard"
         },
         {
-            "name": "Admin Marketing: Communications",
-            "description": "Admin Marketing → Email Templates endpoints (Block F2a).\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Marketing\\Communications\\TemplateController 1:1.\n\nREST:\n  GET    /api/admin/marketing/templates\n  GET    /api/admin/marketing/templates/{id}\n  POST   /api/admin/marketing/templates\n  PUT    /api/admin/marketing/templates/{id}\n  DELETE /api/admin/marketing/templates/{id}\n\nGraphQL:\n  adminMarketingTemplates           — cursor listing\n  adminMarketingTemplate(id:)       — detail\n  createAdminMarketingTemplate\n  updateAdminMarketingTemplate\n  deleteAdminMarketingTemplate"
+            "name": "Admin Sales: EU Withdrawal"
         },
         {
-            "name": "Admin Marketing: Promotions",
-            "description": "One-operation resource for mass-deleting catalog rules.\n\nREST:\n  POST /api/admin/marketing/catalog-rules/mass-delete\n    Body: { \"indices\": [12, 18] }\n    200:  { \"deleted\": [12, 18], \"message\": \"...\" }\n\nGraphQL:\n  createAdminMarketingCatalogRuleMassDelete"
+            "name": "Admin Sales: Invoices"
         },
         {
-            "name": "Admin Marketing: Search & SEO",
-            "description": "One-operation resource for mass-deleting URL rewrites.\n\nREST:\n  POST /api/admin/marketing/url-rewrites/mass-delete\n    Body: { \"indices\": [12, 18] }\n    200:  { \"deleted\": [12, 18], \"message\": \"...\" }\n\nGraphQL:\n  createAdminMarketingUrlRewriteMassDelete"
+            "name": "Admin Marketing: Communications"
         },
         {
-            "name": "Admin Menu",
-            "description": "Resource 'Admin Menu' operations."
+            "name": "Admin Marketing: Promotions"
         },
         {
-            "name": "Admin Products",
-            "description": "Admin Product search/listing — slim row for the Create-Order \"Add Product\"\nmodal and any other admin product-picker workflow.\n\nREST   : GET /api/admin/products → `{ data: [AdminProduct], meta: {...} }`\n         (envelope applied by AdminCollectionEnvelopeNormalizer).\nGraphQL: adminProducts query → native cursor pagination.\n\nDifferences from the shop /api/shop/products listing:\n  - No automatic status=1 filter — admin sees disabled/draft products too\n    (optional ?status=1 filter still works).\n  - Returns booking products too (so they're visible); the booking guard in\n    AdminCartAddItemProcessor blocks them at add-to-cart time.\n  - Slim shape: id, sku, type, name, status, price, formattedPrice,\n    baseImageUrl, isSaleable. NO heavy variants/bundleOptions/superAttributes\n    relations — the picker just needs to identify the product."
+            "name": "Admin Marketing: Search & SEO"
         },
         {
-            "name": "Admin Authentication",
-            "description": "Read the authenticated admin's own profile."
+            "name": "Admin Menu"
         },
         {
-            "name": "Admin Sales: Refunds",
-            "description": "Resource 'Admin Sales: Refunds' operations."
+            "name": "Admin Products"
         },
         {
-            "name": "Admin Reporting: Customers",
-            "description": "Admin reporting — customers (read-only).\n\nREST   : GET /api/admin/reporting/customers\nGraphQL: adminReportingCustomers query\n\nMirrors `Reporting/CustomerController::stats()`. `?type=`:\n  total-customers (default), customers-traffic, customers-with-most-sales,\n  customers-with-most-orders, customers-with-most-reviews,\n  top-customer-groups."
+            "name": "Admin Authentication"
         },
         {
-            "name": "Admin Reporting: Overview",
-            "description": "Admin reporting overview (read-only).\n\nREST   : GET /api/admin/reporting/stats\nGraphQL: adminReportingStats query\n\nMirrors `Webkul\\Admin\\Http\\Controllers\\Reporting\\Controller::stats()`.\nThe `?type=` query param picks one of the overview stat groups:\n  total-sales (default), total-orders, total-customers,\n  top-selling-products-by-revenue.\n\n`start` / `end` (ISO) + `channel` (code) bound the period."
+            "name": "Admin Sales: Refunds"
         },
         {
-            "name": "Admin Reporting: Products",
-            "description": "Admin reporting — products (read-only).\n\nREST   : GET /api/admin/reporting/products\nGraphQL: adminReportingProducts query\n\nMirrors `Reporting/ProductController::stats()`. `?type=`:\n  total-sold-quantities (default), total-products-added-to-wishlist,\n  top-selling-products-by-revenue, top-selling-products-by-quantity,\n  products-with-most-reviews, products-with-most-visits,\n  last-search-terms, top-search-terms."
+            "name": "Admin Reporting: Customers"
         },
         {
-            "name": "Admin Reporting: Sales",
-            "description": "Admin reporting — sales (read-only).\n\nREST   : GET /api/admin/reporting/sales\nGraphQL: adminReportingSales query\n\nMirrors `Reporting/SaleController::stats()`. `?type=`:\n  total-sales (default), average-sales, total-orders, purchase-funnel,\n  abandoned-carts, refunds, tax-collected, shipping-collected,\n  top-payment-methods, sales-by-coupon."
+            "name": "Admin Reporting: Overview"
         },
         {
-            "name": "Admin Sales: RMA",
-            "description": "Resource 'Admin Sales: RMA' operations."
+            "name": "Admin Reporting: Products"
         },
         {
-            "name": "Admin Settings: Channels",
-            "description": "Admin Settings → Channels endpoints (Block B Wave 2; objectified 2026-06-22).\n\nBare Eloquent `#[ApiResource]` parent. Nested data is field-selectable:\n  GraphQL → `translations`/`locales`/`currencies`/`inventorySources` Relay\n            connections + `homeSeo` typed object.\n  REST    → the same data as flat arrays of objects (no connections).\n\nREST shape stays flat via `output: AdminSettingsChannelRestDto`; GraphQL ops\ncarry NO output so they return this Eloquent model → connections resolve.\n\nBREAKING (user-approved): the old scalar `localeIds`/`currencyIds`/\n`inventorySourceIds` int arrays are REPLACED by the `locales`/`currencies`/\n`inventorySources` object connections (GraphQL) / object arrays (REST).\n\nREST:\n  GET    /api/admin/settings/channels            — datagrid-parity listing\n  GET    /api/admin/settings/channels/{id}       — detail\n  POST   /api/admin/settings/channels            — create\n  PUT    /api/admin/settings/channels/{id}       — update (translatable via translations map)\n  DELETE /api/admin/settings/channels/{id}       — delete (guards: last channel, app.channel)\n\nGraphQL:\n  adminSettingsChannels / adminSettingsChannel(id:)\n  createAdminSettingsChannel / updateAdminSettingsChannel / deleteAdminSettingsChannel\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Settings\\ChannelController 1:1.\nImage uploads (logo/favicon) deferred — accept storage paths only."
+            "name": "Admin Reporting: Sales"
         },
         {
-            "name": "Admin Settings: Currencies",
-            "description": "One-operation resource for mass-deleting currencies.\n\nREST:\n  POST /api/admin/settings/currencies/mass-delete\n    Body: { \"indices\": [2, 3] }\n    200:  { \"deleted\": [2, 3], \"message\": \"...\" }\n    400:  if any ID would leave zero currencies OR is a channel base currency, batch rejected.\n\nGraphQL:\n  createAdminSettingsCurrencyMassDelete"
+            "name": "Admin Sales: RMA"
         },
         {
-            "name": "Admin Settings: Data Transfer",
-            "description": "POST /api/admin/settings/data-transfer/imports/{id}/validate\n+ validateAdminSettingsDataTransferImportValidate mutation.\n\nRuns the import validator and returns { is_valid, import } (mapped onto the\nAdminSettingsDataTransferImport output). Permission: settings.data_transfer.imports.edit."
+            "name": "Admin Settings: Channels"
         },
         {
-            "name": "Admin Settings: Exchange Rates",
-            "description": "Auto-sync admin settings exchange rates from the configured external provider\n(the admin \"Update Rates\" button — Webkul\\Admin ExchangeRateController::updateRates).\n\nREST:    POST /api/admin/settings/exchange-rates/update-rates\nGraphQL: createAdminSettingsExchangeRateUpdateRates\n\nResolves the provider via services.exchange_api.<default>.class and runs its\nupdateRates(). Provider/network failures surface as HTTP 422 with the\nprovider's own message."
+            "name": "Admin Settings: Currencies"
         },
         {
-            "name": "Admin Settings: Inventory Sources",
-            "description": "Mass-delete admin settings inventory sources.\n\nREST:    POST /api/admin/settings/inventory-sources/mass-delete\nGraphQL: createAdminSettingsInventorySourceMassDelete\n\nGuards: refuses to delete every remaining source (must leave at least 1);\nrefuses any id that is referenced by product_inventories."
+            "name": "Admin Settings: Data Transfer"
         },
         {
-            "name": "Admin Settings: Locales",
-            "description": "Mass-delete admin settings locales.\n\nREST:    POST /api/admin/settings/locales/mass-delete\nGraphQL: createAdminSettingsLocaleMassDelete\n\nPer-id guards (skip + report or fail row-by-row): would-be-last-locale,\nchannel-default. Non-existent IDs are silently skipped."
+            "name": "Admin Settings: Exchange Rates"
         },
         {
-            "name": "Admin Settings: Roles",
-            "description": "Admin Settings → Roles endpoints (Block B Wave 2).\n\nREST:\n  GET    /api/admin/settings/roles\n  GET    /api/admin/settings/roles/{id}\n  POST   /api/admin/settings/roles\n  PUT    /api/admin/settings/roles/{id}\n  DELETE /api/admin/settings/roles/{id}    (guards: in-use, last-role)\n\nGraphQL:\n  adminSettingsRoles / adminSettingsRole\n  createAdminSettingsRole / updateAdminSettingsRole / deleteAdminSettingsRole\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Settings\\RoleController 1:1."
+            "name": "Admin Settings: Inventory Sources"
         },
         {
-            "name": "Admin Settings: Tax Categories",
-            "description": "Admin Settings → Tax Categories endpoints (Block B Wave 3).\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Settings\\Tax\\TaxCategoryController 1:1.\n\nREST:\n  GET    /api/admin/settings/tax-categories\n  GET    /api/admin/settings/tax-categories/{id}\n  POST   /api/admin/settings/tax-categories\n  PUT    /api/admin/settings/tax-categories/{id}\n  DELETE /api/admin/settings/tax-categories/{id}\n\nGraphQL:\n  adminSettingsTaxCategories       — cursor listing\n  adminSettingsTaxCategory(id:)    — detail\n  createAdminSettingsTaxCategory\n  updateAdminSettingsTaxCategory\n  deleteAdminSettingsTaxCategory"
+            "name": "Admin Settings: Locales"
         },
         {
-            "name": "Admin Settings: Tax Rates",
-            "description": "Admin Settings → Tax Rates endpoints (Block B Wave 3).\n\nMirrors Webkul\\Admin\\Http\\Controllers\\Settings\\Tax\\TaxRateController.\n\nis_zip conditional validation:\n  - is_zip = false → zip_code required (the specific zip mode)\n  - is_zip = true  → zip_from + zip_to required (the range mode)\n\nNo mass-delete in the monolith admin UI; not exposed."
+            "name": "Admin Settings: Roles"
         },
         {
-            "name": "Admin Settings: Themes",
-            "description": "Mass-update status admin settings theme customizations.\n\nREST:    POST /api/admin/settings/themes/mass-update-status\nGraphQL: createAdminSettingsThemeMassUpdateStatus\n\nMirrors Bagisto admin ThemeController::massUpdate which calls\nThemeCustomizationRepository::massUpdateStatus."
+            "name": "Admin Settings: Tax Categories"
         },
         {
-            "name": "Admin Settings: Users",
-            "description": "Self-delete the authenticated admin's OWN account, password-confirmed\n(the admin \"delete my account\" flow — Webkul\\Admin UserController::destroySelf).\n\nDistinct from DELETE /api/admin/settings/users/{id}, which deletes ANOTHER\nadmin and refuses self-deletion. This endpoint deletes the caller's own admin\nafter re-confirming their password. It deletes the admin that owns the calling\nintegration token, which invalidates that token.\n\nREST:    POST /api/admin/settings/users/delete-self\nGraphQL: createAdminSettingsUserDeleteSelf"
+            "name": "Admin Settings: Tax Rates"
         },
         {
-            "name": "Admin Sales: Shipments",
-            "description": "Resource 'Admin Sales: Shipments' operations."
+            "name": "Admin Settings: Users"
         },
         {
-            "name": "Admin Sales: Transactions",
-            "description": "Resource 'Admin Sales: Transactions' operations."
+            "name": "Admin Sales: Shipments"
+        },
+        {
+            "name": "Admin Sales: Transactions"
         }
     ],
     "webhooks": []

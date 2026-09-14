@@ -11,15 +11,6 @@ use Symfony\Component\TypeInfo\Type as NativeType;
 
 /**
  * Restores the element type of `@var array<Foo>` / `Foo[]` DTO properties when the
- * runtime docblock is unavailable.
- *
- * php-fpm built with `opcache.save_comments=0` strips doc comments from bytecode, so
- * Reflection::getDocComment() returns false and symfony/type-info cannot read the
- * generic element type — a `?array $items` property then resolves to the GraphQL
- * `Iterable` scalar instead of a `[CartItem]` connection. This factory re-reads the
- * element class from the class SOURCE FILE (comments intact on disk, OPcache-immune)
- * and re-applies the collection type. No-op when the decorated factory already carries
- * the object element type (CLI / save_comments=1).
  */
 class SourceDocblockPropertyMetadataFactory implements PropertyMetadataFactoryInterface
 {

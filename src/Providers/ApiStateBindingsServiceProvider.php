@@ -5,6 +5,23 @@ namespace Webkul\BagistoApi\Providers;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\State\ProviderInterface;
 use Illuminate\Support\ServiceProvider;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionCollectionProvider;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionDiscardProcessor;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionDraftProcessor;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionDuplicateProcessor;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionFieldsProvider;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionItemProvider;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionMediaProcessor;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionPreviewProvider;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionProcessor;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionPublishProcessor;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionReorderProcessor;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionStatusProcessor;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceSectionWriteProvider;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceThemeActivateProcessor;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceThemeCollectionProvider;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceThemeImpactProvider;
+use Webkul\BagistoApi\Admin\State\AdminAppearanceThemeItemProvider;
 use Webkul\BagistoApi\Admin\State\AdminAttributeCollectionProvider;
 use Webkul\BagistoApi\Admin\State\AdminAttributeFamilyCollectionProvider;
 use Webkul\BagistoApi\Admin\State\AdminAttributeFamilyItemProvider;
@@ -361,13 +378,18 @@ use Webkul\BagistoApi\State\ProductReviewProcessor;
 use Webkul\BagistoApi\State\ProductReviewProvider;
 use Webkul\BagistoApi\State\ReorderProcessor;
 use Webkul\BagistoApi\State\ReturnableItemProvider;
+use Webkul\BagistoApi\State\ReturnableOrderProvider;
+use Webkul\BagistoApi\State\ReturnCustomFieldProvider;
 use Webkul\BagistoApi\State\ReturnReasonProvider;
 use Webkul\BagistoApi\State\ShippingRatesProvider;
 use Webkul\BagistoApi\State\SocialLoginProcessor;
+use Webkul\BagistoApi\State\StorefrontFeatureProvider;
+use Webkul\BagistoApi\State\ThemeProvider;
 use Webkul\BagistoApi\State\VerifyTokenProcessor;
 use Webkul\BagistoApi\State\WishlistItemProvider;
 use Webkul\BagistoApi\State\WishlistProcessor;
 use Webkul\BagistoApi\State\WishlistProvider;
+use Webkul\BagistoApi\Support\CoreCapabilities;
 
 class ApiStateBindingsServiceProvider extends ServiceProvider
 {
@@ -386,6 +408,9 @@ class ApiStateBindingsServiceProvider extends ServiceProvider
         $this->app->tag(CustomerReturnProvider::class, ProviderInterface::class);
         $this->app->tag(EuWithdrawalProvider::class, ProviderInterface::class);
         $this->app->tag(ReturnableItemProvider::class, ProviderInterface::class);
+        $this->app->tag(ReturnableOrderProvider::class, ProviderInterface::class);
+        $this->app->tag(StorefrontFeatureProvider::class, ProviderInterface::class);
+        $this->app->tag(ReturnCustomFieldProvider::class, ProviderInterface::class);
         $this->app->tag(ReturnReasonProvider::class, ProviderInterface::class);
         $this->app->tag(CustomerReturnMessageProvider::class, ProviderInterface::class);
         $this->app->tag(AdminReturnCollectionProvider::class, ProviderInterface::class);
@@ -467,6 +492,41 @@ class ApiStateBindingsServiceProvider extends ServiceProvider
         $this->app->tag(AdminProductProvider::class, ProviderInterface::class);
         $this->app->tag(AdminCatalogProductCollectionProvider::class, ProviderInterface::class);
         $this->app->tag(AdminCatalogProductDetailProvider::class, ProviderInterface::class);
+        // Appearance → Themes + Sections on core 2.4.10+, else Settings → Themes. Only one
+        // era may be tagged: the bridge instantiates every tagged class on the first /api
+        // request, so a constructor asking for a repository this core lacks is a fatal on
+        // every endpoint.
+        //
+        // BACKWARD COMPATIBILITY: drop the else arm, the condition and the legacy
+        // AdminSettingsTheme* classes when the minimum supported core is 2.4.10.
+        if (app(CoreCapabilities::class)->hasAppearanceSections()) {
+            $this->app->tag(ThemeProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceThemeCollectionProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceThemeItemProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceThemeImpactProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceSectionCollectionProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceSectionItemProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceSectionWriteProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceSectionFieldsProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceSectionPreviewProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminAppearanceThemeActivateProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionDraftProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionStatusProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionReorderProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionDuplicateProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionPublishProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionDiscardProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminAppearanceSectionMediaProcessor::class, ProcessorInterface::class);
+        } else {
+            $this->app->tag(AdminSettingsThemeCollectionProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminSettingsThemeItemProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminSettingsThemeWriteProvider::class, ProviderInterface::class);
+            $this->app->tag(AdminSettingsThemeProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminSettingsThemeMassDeleteProcessor::class, ProcessorInterface::class);
+            $this->app->tag(AdminSettingsThemeMassUpdateStatusProcessor::class, ProcessorInterface::class);
+        }
+
         $this->app->tag(AdminAttributeCollectionProvider::class, ProviderInterface::class);
         $this->app->tag(AdminAttributeItemProvider::class, ProviderInterface::class);
         $this->app->tag(AdminAttributeProcessor::class, ProcessorInterface::class);
@@ -569,12 +629,6 @@ class ApiStateBindingsServiceProvider extends ServiceProvider
         $this->app->tag(AdminSettingsLocaleWriteProvider::class, ProviderInterface::class);
         $this->app->tag(AdminSettingsLocaleProcessor::class, ProcessorInterface::class);
         $this->app->tag(AdminSettingsLocaleMassDeleteProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminSettingsThemeCollectionProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminSettingsThemeItemProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminSettingsThemeWriteProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminSettingsThemeProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminSettingsThemeMassDeleteProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminSettingsThemeMassUpdateStatusProcessor::class, ProcessorInterface::class);
         $this->app->tag(AdminSettingsUserCollectionProvider::class, ProviderInterface::class);
         $this->app->tag(AdminSettingsUserItemProvider::class, ProviderInterface::class);
         $this->app->tag(AdminSettingsUserWriteProvider::class, ProviderInterface::class);

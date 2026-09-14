@@ -169,6 +169,11 @@ return [
             'invalid-order' => 'The selected order is not valid.',
             'invalid-item' => 'The selected item is not eligible for return.',
             'qty-exceeds' => 'The requested quantity exceeds the returnable quantity.',
+            'invalid-package-condition' => 'Package condition must be "open" or "packed".',
+            'invalid-image' => 'One or more of the uploaded files has an unsupported file type.',
+            'invalid-custom-field' => 'Unknown custom field ":id".',
+            'custom-field-required' => 'The field ":field" is required.',
+            'invalid-custom-field-value' => 'The value for ":field" is not one of the allowed options.',
             'created' => 'Return request created successfully.',
             'canceled' => 'Return request canceled successfully.',
             'already-canceled' => 'Return request is already canceled.',
@@ -418,10 +423,10 @@ return [
             'deleted' => 'Your GDPR data request has been deleted successfully.',
         ],
 
-        'theme-customization' => [
-            'id-required' => 'Theme Customization ID is required',
-            'invalid-id-format' => 'Invalid ID format. Expected IRI format like "/api/shop/theme-customizations/1" or numeric ID',
-            'not-found' => 'Theme Customization not found',
+        'section' => [
+            'id-required' => 'Section ID is required',
+            'invalid-id-format' => 'Invalid ID format. Expected IRI format like "/api/shop/sections/1" or numeric ID',
+            'not-found' => 'Section not found',
         ],
 
         'install' => [
@@ -787,6 +792,41 @@ return [
             ],
         ],
 
+        'appearance' => [
+            'no-permission' => 'You do not have permission to manage appearance.',
+
+            'theme' => [
+                'not-found' => 'Theme not found.',
+                'not-installed' => 'This theme is not installed.',
+                'channel-ids-required' => 'At least one channel is required.',
+                'unknown-channel' => 'One or more channels do not exist.',
+                'activated' => 'Theme activated successfully.',
+            ],
+
+            'section' => [
+                'not-found' => 'Section not found.',
+                'invalid-payload' => 'Unsupported section payload.',
+                'footer-links-exists' => 'This channel already has a footer links section.',
+                'options-required' => 'Options are required.',
+                'status-required' => 'Status is required.',
+                'section-ids-required' => 'At least one section is required.',
+                'reorder-single-scope' => 'Sections can only be reordered within one theme and channel at a time.',
+                'reorder-incomplete' => 'Reordering needs every section of the theme and channel, in the order they should render.',
+                'unknown-section' => 'One or more sections do not exist.',
+                'file-required' => 'A file is required.',
+                'created' => 'Section created successfully.',
+                'updated' => 'Section updated successfully.',
+                'deleted' => 'Section deleted successfully.',
+                'draft-saved' => 'Section changes staged successfully.',
+                'status-staged' => 'Section status staged successfully.',
+                'order-staged' => 'Section order staged successfully.',
+                'duplicated' => 'Section copied successfully.',
+                'published' => 'Section changes published successfully.',
+                'discarded' => 'Section changes discarded successfully.',
+                'media-uploaded' => 'Media uploaded successfully.',
+            ],
+        ],
+
         'sales' => [
             'no-permission' => 'You do not have permission to view this sales resource.',
             'invoice' => [
@@ -927,6 +967,8 @@ return [
 
             'image' => [
                 'uploaded' => 'Product image uploaded successfully.',
+                'updated' => 'Product image updated successfully.',
+                'update-empty' => 'Send an alt text or a position to update.',
                 'reordered' => 'Product images reordered successfully.',
                 'deleted' => 'Product image deleted successfully.',
                 'image-required' => 'An image file is required (multipart field "image").',
@@ -1048,6 +1090,7 @@ return [
             'group-name-duplicate' => 'An attribute group name must be unique within the attribute family.',
             'update-failed' => 'Attribute family could not be updated.',
             'create-failed' => 'Attribute family could not be created.',
+            'default-delete-error' => 'The default attribute family cannot be deleted.',
             'last-delete-error' => 'At least one attribute family is required.',
             'attribute-product-error' => 'This attribute family is in use by one or more products. Reassign those products before deleting it.',
             'delete-failed' => 'Attribute family could not be deleted.',
@@ -1298,6 +1341,7 @@ return [
                 'no-permission' => 'You do not have permission to manage sitemaps.',
                 'generate' => [
                     'id-required' => 'Sitemap id is required.',
+                    'no-channels' => 'This sitemap covers no channel, so there is nothing to generate. Assign at least one channel to it first.',
                     'success' => 'Sitemap regenerated successfully.',
                     'failed' => 'Sitemap generation failed: :message',
                 ],
@@ -1321,6 +1365,7 @@ return [
             ],
 
             'template' => [
+                'campaign-associated' => 'This email template is used by a campaign, so it cannot be deleted. Remove it from the campaign first.',
                 'not-found' => 'Email template not found.',
                 'created' => 'Email template created successfully.',
                 'updated' => 'Email template updated successfully.',
@@ -1331,6 +1376,7 @@ return [
             ],
 
             'event' => [
+                'campaign-associated' => 'This event is used by a campaign, so it cannot be deleted. Remove it from the campaign first.',
                 'not-found' => 'Marketing event not found.',
                 'created' => 'Marketing event created successfully.',
                 'updated' => 'Marketing event updated successfully.',

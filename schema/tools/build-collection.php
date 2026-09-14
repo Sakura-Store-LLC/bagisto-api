@@ -10,7 +10,25 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Utils\BuildSchema;
 
-require_once __DIR__.'/../../../../../vendor/autoload.php';
+// Runs both from a host project (packages/Webkul/BagistoApi/...) and from the package
+// repository, where the package itself is the root.
+$autoload = null;
+
+foreach (['/../../../../../vendor/autoload.php', '/../../vendor/autoload.php'] as $candidate) {
+    if (file_exists(__DIR__.$candidate)) {
+        $autoload = __DIR__.$candidate;
+
+        break;
+    }
+}
+
+if ($autoload === null) {
+    fwrite(STDERR, "Could not locate vendor/autoload.php. Run composer install first.\n");
+
+    exit(1);
+}
+
+require_once $autoload;
 
 final class CollectionBuilder
 {
@@ -20,14 +38,9 @@ final class CollectionBuilder
 
     public function __construct(?string $outputDir = null)
     {
-        if ($outputDir === null) {
-            fwrite(STDERR, "Usage: php build-collection.php <collections-directory>\n\n");
-            fwrite(STDERR, "The collections live in the standalone bagisto-api-collection repository,\n");
-            fwrite(STDERR, "so pass its collections/ directory, e.g.\n\n");
-            fwrite(STDERR, "  php build-collection.php /path/to/bagisto-api-collection/collections\n");
-
-            exit(1);
-        }
+        // The package's own collections/ directory, so running the tool with no argument
+        // regenerates the collections that ship with it.
+        $outputDir ??= __DIR__.'/../../collections';
 
         $this->outputDir = rtrim($outputDir, '/');
 

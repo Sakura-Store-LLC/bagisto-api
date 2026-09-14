@@ -716,6 +716,11 @@
         "tag": "Customer Return",
         "resource": "Webkul\\BagistoApi\\Models\\CustomerReturn"
     },
+    "returnCustomFields": {
+        "kind": "query",
+        "tag": "Customer Return",
+        "resource": "Webkul\\BagistoApi\\Models\\ReturnCustomField"
+    },
     "returnReasons": {
         "kind": "query",
         "tag": "Customer Return",
@@ -726,6 +731,11 @@
         "tag": "Customer Return",
         "resource": "Webkul\\BagistoApi\\Models\\ReturnableItem"
     },
+    "returnableOrders": {
+        "kind": "query",
+        "tag": "Customer Return",
+        "resource": "Webkul\\BagistoApi\\Models\\ReturnableOrder"
+    },
     "revokeGdprRequest": {
         "kind": "mutation",
         "tag": "GDPR Requests",
@@ -735,15 +745,25 @@
             "message": "Please delete my personal data."
         }
     },
-    "themeCustomization": {
+    "section": {
         "kind": "query",
-        "tag": "ThemeCustomization",
-        "resource": "Webkul\\BagistoApi\\Models\\ThemeCustomization"
+        "tag": "Theme",
+        "resource": "Webkul\\BagistoApi\\Models\\Section"
     },
-    "themeCustomizations": {
+    "sections": {
         "kind": "query",
-        "tag": "ThemeCustomization",
-        "resource": "Webkul\\BagistoApi\\Models\\ThemeCustomization"
+        "tag": "Theme",
+        "resource": "Webkul\\BagistoApi\\Models\\Section"
+    },
+    "storefrontFeature": {
+        "kind": "query",
+        "tag": "Storefront",
+        "resource": "Webkul\\BagistoApi\\Models\\StorefrontFeature"
+    },
+    "theme": {
+        "kind": "query",
+        "tag": "Theme",
+        "resource": "Webkul\\BagistoApi\\Models\\Theme"
     },
     "toggleWishlist": {
         "kind": "mutation",
