@@ -63,9 +63,13 @@ Edit `bootstrap/providers.php`:
 ```php
 <?php
 
+// ...existing imports...
+use Webkul\BagistoApi\Providers\BagistoApiServiceProvider;
+// ...rest of imports...
+
 return [
     // ...existing providers...
-    Webkul\BagistoApi\Providers\BagistoApiServiceProvider::class,
+    BagistoApiServiceProvider::class,
     // ...rest of providers...
 ];
 ```
@@ -87,10 +91,15 @@ Edit `composer.json` and update the `autoload` section:
 #### Step 4: Install Dependencies
 
 ```bash
-
-composer require \
+composer require -W \
   api-platform/laravel:~4.3.8 \
-  api-platform/graphql:~4.3.8
+  api-platform/graphql:~4.3.8 \
+  "symfony/property-access:^7.0" \
+  "symfony/property-info:^7.1" \
+  "symfony/serializer:^7.4.9" \
+  "symfony/type-info:^7.3" \
+  "symfony/validator:^7.0" \
+  "symfony/web-link:^7.4"
 ```
 
 #### Step 5: Run the installation
@@ -185,7 +194,20 @@ Fill in only what the collection you are using needs.
 
 ### Keeping them current
 
-`schema/tools/build-collection.php` regenerates the collections from the exported schemas, so a collection follows the API rather than being maintained by hand. Three workflows keep the published copies in step: **Validate** checks the files on every push, **Push Collections to Postman** publishes them to the official workspace when they change on `main`, and **Sync Collections from Postman** pulls edits made in Postman back into the repository on a release. All three refuse to move a real storefront key.
+`schema/tools/build-collection.php` regenerates the collections from the exported schemas, so a collection follows the API rather than being maintained by hand. After `bagisto-api-platform:export-schema` writes a new schema, rerun the builder and commit both — **Validate** rebuilds the collections in CI and fails the push if the committed copies no longer match, so a stale collection cannot reach the workspace.
+
+Three workflows keep the published copies in step: **Validate** checks the files and that rebuild on every push, **Push Collections to Postman** publishes them to the official workspace when they change on `main`, and **Sync Collections from Postman** pulls edits made in Postman back into the repository on a release. All three refuse to move a real storefront key.
+
+Publishing needs four repository secrets, and the push and sync jobs skip with a notice while any of them is missing rather than failing the build:
+
+| Secret | Value |
+|--------|-------|
+| `POSTMAN_API_KEY` | A Postman API key with write access to the workspace |
+| `POSTMAN_SHOP_COLLECTION_ID` | UID of the Bagisto Shop API collection |
+| `POSTMAN_ADMIN_COLLECTION_ID` | UID of the Bagisto Admin API collection |
+| `POSTMAN_ENVIRONMENT_ID` | UID of the Bagisto environment |
+
+Collection and environment UIDs come from Postman — open the item, then **Info → ID**. Validation needs no secret and runs on every push regardless.
 
 Values in the requests are placeholders — replace them with records that exist on your store. Postman's **Auto Fetch** runs a schema introspection query that costs far more than a normal request; switch it off if the GraphQL folders feel slow.
 

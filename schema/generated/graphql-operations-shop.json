@@ -542,6 +542,11 @@
         "tag": "EU Withdrawal",
         "resource": "Webkul\\BagistoApi\\Models\\EuWithdrawal"
     },
+    "euWithdrawalStatus": {
+        "kind": "query",
+        "tag": "EU Withdrawal",
+        "resource": "Webkul\\BagistoApi\\Models\\EuWithdrawalStatus"
+    },
     "euWithdrawals": {
         "kind": "query",
         "tag": "EU Withdrawal",
@@ -556,6 +561,11 @@
         "kind": "query",
         "tag": "GDPR Requests",
         "resource": "Webkul\\BagistoApi\\Models\\GdprRequest"
+    },
+    "gdprStatus": {
+        "kind": "query",
+        "tag": "GDPR Requests",
+        "resource": "Webkul\\BagistoApi\\Models\\GdprStatus"
     },
     "getCustomerAddresses": {
         "kind": "query",
@@ -754,11 +764,6 @@
         "kind": "query",
         "tag": "Theme",
         "resource": "Webkul\\BagistoApi\\Models\\Section"
-    },
-    "storefrontFeature": {
-        "kind": "query",
-        "tag": "Storefront",
-        "resource": "Webkul\\BagistoApi\\Models\\StorefrontFeature"
     },
     "theme": {
         "kind": "query",

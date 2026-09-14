@@ -98,6 +98,10 @@ class CustomerReturnProcessor implements ProcessorInterface
 
         $customAttributes = request()->input('custom_attributes', request()->input('customAttributes'));
 
+        if (is_string($customAttributes)) {
+            $customAttributes = json_decode($customAttributes, true);
+        }
+
         $input->custom_attributes = is_array($customAttributes) ? $customAttributes : null;
 
         return $input;

@@ -461,6 +461,9 @@ type Query {
   euWithdrawal(id: ID!): EuWithdrawal
   euWithdrawals(first: Int, after: String): EuWithdrawalCursorConnection
 
+  "Whether the EU right of withdrawal is enabled on the current channel."
+  euWithdrawalStatus: EuWithdrawalStatus
+
   "Attribute Filters for the category or product grid page"
   categoryAttributeFilters(
     categorySlug: String
@@ -495,6 +498,9 @@ type Query {
     sort: String
     order: String
   ): GdprRequestCursorConnection
+
+  "Whether GDPR data requests are enabled on the current channel."
+  gdprStatus: GdprStatus
 
   "Get billing and shipping addresses for a cart."
   collectionGetCheckoutAddresses(
@@ -745,9 +751,6 @@ type Query {
 
   "Get available shipping rates for a cart by token"
   collectionShippingRates: [ShippingRates]
-
-  "The optional storefront features this channel has switched on."
-  storefrontFeature: StorefrontFeature
 
   "The theme the current channel runs, and the section types it draws."
   theme: Theme
@@ -2462,7 +2465,6 @@ type Customer implements Node {
   isSuspended: String
   token: String
   rememberToken: String
-  deviceToken: String
   name: String
 }
 
@@ -3604,6 +3606,14 @@ type EuWithdrawalPageInfo {
   hasPreviousPage: Boolean!
 }
 
+"Whether the EU right of withdrawal is enabled on the current channel."
+type EuWithdrawalStatus implements Node {
+  id: ID!
+  _id: String
+  channel: String
+  enabled: Boolean
+}
+
 "Cursor connection for CategoryAttributeFilter."
 type CategoryAttributeFilterCursorConnection {
   edges: [CategoryAttributeFilterEdge]
@@ -3749,6 +3759,14 @@ type GdprRequestPageInfo {
   startCursor: String
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
+}
+
+"Whether GDPR data requests are enabled on the current channel."
+type GdprStatus implements Node {
+  id: ID!
+  _id: String
+  channel: String
+  enabled: Boolean
 }
 
 "Cursor connection for GetCheckoutAddress."
@@ -4038,15 +4056,6 @@ type ShippingRates implements Node {
   baseFormattedPrice: String
   carrier: String
   carrierTitle: String
-}
-
-"The optional storefront features this channel has switched on."
-type StorefrontFeature implements Node {
-  id: ID!
-  _id: String
-  channel: String
-  gdpr: Boolean
-  euWithdrawal: Boolean
 }
 
 "The theme the current channel runs, and the section types it draws."
@@ -5356,7 +5365,6 @@ type createCustomerNestedPayload implements Node {
   isSuspended: String
   token: String
   rememberToken: String
-  deviceToken: String
   name: String
 }
 
@@ -5408,7 +5416,6 @@ input createCustomerInput {
   subscribedToNewsLetter: Boolean
   isVerified: String
   isSuspended: String
-  deviceToken: String
   confirmPassword: String
   clientMutationId: String
 }
