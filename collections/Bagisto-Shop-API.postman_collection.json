@@ -4433,7 +4433,7 @@
                                         "returns"
                                     ]
                                 },
-                                "description": "Creates a return for one item of one of the customer's orders. The item must be return-eligible (see /returnable-items?order_id=), and `order_item_id` is the **order item** id from that endpoint, not the product id; `rmaQty` is capped server-side by the returnable quantity. Send `agreement=true`. `package_condition` must be `open` or `packed`. Answer the return form's custom fields with `custom_attributes`, keyed by the field id from /return-custom-fields — required fields are enforced. Send as `multipart/form-data` to attach evidence images as `images[]` (REST only; the mime types allowed by the RMA configuration). Returns the created RMA.",
+                                "description": "Raises a return for one returnable order item. Attach evidence images in `images[]`.",
                                 "body": {
                                     "mode": "raw",
                                     "raw": "{\n    \"order_id\": 12,\n    \"order_item_id\": 45,\n    \"rma_qty\": 1,\n    \"resolution_type\": \"return\",\n    \"rma_reason_id\": 2,\n    \"information\": \"Item arrived damaged.\",\n    \"package_condition\": \"open\",\n    \"custom_attributes\": {\n        \"1\": \"INV-9921\",\n        \"2\": [\n            \"morning\",\n            \"evening\"\n        ]\n    },\n    \"agreement\": true\n}",
@@ -4544,7 +4544,7 @@
                                         "return-messages"
                                     ]
                                 },
-                                "description": "Adds a customer message to the RMA conversation. Body `{ return_id, message }`; an optional file can be attached by sending the body as `multipart/form-data` with the file in `file` (REST only). Returns the created message, with `attachment` and `attachmentUrl` set when a file was sent.",
+                                "description": "Sends a message on a return. Attach a file in `file`.",
                                 "body": {
                                     "mode": "raw",
                                     "raw": "{\n    \"return_id\": 12,\n    \"message\": \"Any update on my return?\"\n}",
@@ -4808,6 +4808,44 @@
                     "name": "EU Withdrawal",
                     "item": [
                         {
+                            "name": "Check whether EU withdrawal is enabled",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "X-STOREFRONT-KEY",
+                                        "value": "{{storefrontKey}}",
+                                        "description": "Storefront API Key for authentication. Required for all shop/storefront API requests."
+                                    },
+                                    {
+                                        "key": "X-Locale",
+                                        "value": "{{locale}}",
+                                        "description": "Locale code for localized data (e.g. \"en\", \"fr\", \"ar\"). Defaults to channel's default locale."
+                                    },
+                                    {
+                                        "key": "X-Channel",
+                                        "value": "{{channel}}",
+                                        "description": "Channel code (e.g. \"default\"). Defaults to the current channel."
+                                    },
+                                    {
+                                        "key": "X-Currency",
+                                        "value": "{{currency}}",
+                                        "description": "Currency code (e.g. \"USD\", \"EUR\", \"INR\"). Defaults to channel's base currency."
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/eu-withdrawal-status",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "eu-withdrawal-status"
+                                    ]
+                                },
+                                "description": "Returns whether customers can file an EU withdrawal on the current channel."
+                            }
+                        },
+                        {
                             "name": "File an EU right-of-withdrawal declaration (authenticated customer)",
                             "request": {
                                 "method": "POST",
@@ -5013,6 +5051,44 @@
                 {
                     "name": "GDPR Requests",
                     "item": [
+                        {
+                            "name": "Check whether GDPR requests are enabled",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "X-STOREFRONT-KEY",
+                                        "value": "{{storefrontKey}}",
+                                        "description": "Storefront API Key for authentication. Required for all shop/storefront API requests."
+                                    },
+                                    {
+                                        "key": "X-Locale",
+                                        "value": "{{locale}}",
+                                        "description": "Locale code for localized data (e.g. \"en\", \"fr\", \"ar\"). Defaults to channel's default locale."
+                                    },
+                                    {
+                                        "key": "X-Channel",
+                                        "value": "{{channel}}",
+                                        "description": "Channel code (e.g. \"default\"). Defaults to the current channel."
+                                    },
+                                    {
+                                        "key": "X-Currency",
+                                        "value": "{{currency}}",
+                                        "description": "Currency code (e.g. \"USD\", \"EUR\", \"INR\"). Defaults to channel's base currency."
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/gdpr-status",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "gdpr-status"
+                                    ]
+                                },
+                                "description": "Returns whether customers can raise GDPR data requests on the current channel."
+                            }
+                        },
                         {
                             "name": "Delete a GDPR data request",
                             "request": {
@@ -8238,49 +8314,6 @@
                     ]
                 },
                 {
-                    "name": "Storefront",
-                    "item": [
-                        {
-                            "name": "Which optional features this channel has switched on",
-                            "request": {
-                                "method": "GET",
-                                "header": [
-                                    {
-                                        "key": "X-STOREFRONT-KEY",
-                                        "value": "{{storefrontKey}}",
-                                        "description": "Storefront API Key for authentication. Required for all shop/storefront API requests."
-                                    },
-                                    {
-                                        "key": "X-Locale",
-                                        "value": "{{locale}}",
-                                        "description": "Locale code for localized data (e.g. \"en\", \"fr\", \"ar\"). Defaults to channel's default locale."
-                                    },
-                                    {
-                                        "key": "X-Channel",
-                                        "value": "{{channel}}",
-                                        "description": "Channel code (e.g. \"default\"). Defaults to the current channel."
-                                    },
-                                    {
-                                        "key": "X-Currency",
-                                        "value": "{{currency}}",
-                                        "description": "Currency code (e.g. \"USD\", \"EUR\", \"INR\"). Defaults to channel's base currency."
-                                    }
-                                ],
-                                "url": {
-                                    "raw": "{{baseUrl}}/features",
-                                    "host": [
-                                        "{{baseUrl}}"
-                                    ],
-                                    "path": [
-                                        "features"
-                                    ]
-                                },
-                                "description": "Tells a storefront which optional features the store has enabled, so it can decide what to render before calling anything that might refuse. Both flags are read per channel from the admin configuration. Call this once on boot rather than probing an endpoint and reading its error. Returns: `gdpr` — whether customers may raise GDPR data requests (`/api/shop/gdpr-requests`); `euWithdrawal` — whether the EU right-of-withdrawal form is offered on orders (`/api/shop/eu-withdrawals`). Returns are not listed: Bagisto has no master switch for them, so whether a customer can return anything is answered per order by `/api/shop/returnable-orders`. Public endpoint."
-                            }
-                        }
-                    ]
-                },
-                {
                     "name": "Theme",
                     "item": [
                         {
@@ -10252,7 +10285,7 @@
                                         "body": {
                                             "mode": "graphql",
                                             "graphql": {
-                                                "query": "query CompareItem($id: ID!) {\n  compareItem(id: $id) {\n    id\n    _id\n    createdAt\n    updatedAt\n    product {\n      id\n      _id\n      sku\n      type\n      additional\n      createdAt\n      updatedAt\n      isSaleable\n      locale\n      channel\n      index\n      combinations\n      superAttributeOptions\n      bookingType\n      name\n      urlKey\n      status\n      description\n      descriptionHtml\n      shortDescription\n      price\n      specialPrice\n      weight\n      productNumber\n      new\n      featured\n      visibleIndividually\n      guestCheckout\n      manageStock\n      metaTitle\n      metaKeywords\n      taxCategoryId\n      specialPriceFrom\n      specialPriceTo\n      cost\n      metaDescription\n      length\n      width\n      height\n      color\n      size\n      brand\n      minimumPrice\n      maximumPrice\n      regularMinimumPrice\n      regularMaximumPrice\n      formattedPrice\n      formattedSpecialPrice\n      formattedMinimumPrice\n      formattedMaximumPrice\n      formattedRegularMinimumPrice\n      formattedRegularMaximumPrice\n      isInWishlist\n      isInCompare\n      baseImageUrl\n    }\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      deviceToken\n      name\n    }\n  }\n}\n",
+                                                "query": "query CompareItem($id: ID!) {\n  compareItem(id: $id) {\n    id\n    _id\n    createdAt\n    updatedAt\n    product {\n      id\n      _id\n      sku\n      type\n      additional\n      createdAt\n      updatedAt\n      isSaleable\n      locale\n      channel\n      index\n      combinations\n      superAttributeOptions\n      bookingType\n      name\n      urlKey\n      status\n      description\n      descriptionHtml\n      shortDescription\n      price\n      specialPrice\n      weight\n      productNumber\n      new\n      featured\n      visibleIndividually\n      guestCheckout\n      manageStock\n      metaTitle\n      metaKeywords\n      taxCategoryId\n      specialPriceFrom\n      specialPriceTo\n      cost\n      metaDescription\n      length\n      width\n      height\n      color\n      size\n      brand\n      minimumPrice\n      maximumPrice\n      regularMinimumPrice\n      regularMaximumPrice\n      formattedPrice\n      formattedSpecialPrice\n      formattedMinimumPrice\n      formattedMaximumPrice\n      formattedRegularMinimumPrice\n      formattedRegularMaximumPrice\n      isInWishlist\n      isInCompare\n      baseImageUrl\n    }\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      name\n    }\n  }\n}\n",
                                                 "variables": "{\n    \"id\": \"1\"\n}"
                                             }
                                         },
@@ -10604,7 +10637,7 @@
                                         "body": {
                                             "mode": "graphql",
                                             "graphql": {
-                                                "query": "mutation CreateCustomer($input: createCustomerInput!) {\n  createCustomer(input: $input) {\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      deviceToken\n      name\n    }\n    clientMutationId\n  }\n}\n",
+                                                "query": "mutation CreateCustomer($input: createCustomerInput!) {\n  createCustomer(input: $input) {\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      name\n    }\n    clientMutationId\n  }\n}\n",
                                                 "variables": "{\n    \"input\": {\n        \"firstName\": \"John\",\n        \"lastName\": \"Doe\",\n        \"email\": \"john@example.com\",\n        \"password\": \"Password123!\",\n        \"confirmPassword\": \"Password123!\"\n    }\n}"
                                             }
                                         },
@@ -10896,7 +10929,7 @@
                                         "body": {
                                             "mode": "graphql",
                                             "graphql": {
-                                                "query": "query Customer($id: ID!) {\n  customer(id: $id) {\n    id\n    _id\n    firstName\n    lastName\n    gender\n    dateOfBirth\n    email\n    phone\n    status\n    apiToken\n    customerGroupId\n    channelId\n    subscribedToNewsLetter\n    isVerified\n    isSuspended\n    token\n    rememberToken\n    deviceToken\n    name\n  }\n}\n",
+                                                "query": "query Customer($id: ID!) {\n  customer(id: $id) {\n    id\n    _id\n    firstName\n    lastName\n    gender\n    dateOfBirth\n    email\n    phone\n    status\n    apiToken\n    customerGroupId\n    channelId\n    subscribedToNewsLetter\n    isVerified\n    isSuspended\n    token\n    rememberToken\n    name\n  }\n}\n",
                                                 "variables": "{\n    \"id\": \"1\"\n}"
                                             }
                                         }
@@ -11400,7 +11433,7 @@
                                         "body": {
                                             "mode": "graphql",
                                             "graphql": {
-                                                "query": "query CustomerDownloadableProduct($id: ID!) {\n  customerDownloadableProduct(id: $id) {\n    id\n    _id\n    productName\n    name\n    url\n    file\n    fileName\n    type\n    downloadBought\n    downloadUsed\n    status\n    downloadCanceled\n    createdAt\n    updatedAt\n    remainingDownloads\n    downloadUrl\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      deviceToken\n      name\n    }\n    order {\n      id\n      _id\n      incrementId\n      status\n      channelName\n      isGuest\n      customerEmail\n      customerFirstName\n      customerLastName\n      shippingMethod\n      shippingTitle\n      shippingDescription\n      couponCode\n      isGift\n      totalItemCount\n      totalQtyOrdered\n      baseCurrencyCode\n      channelCurrencyCode\n      orderCurrencyCode\n      grandTotal\n      baseGrandTotal\n      grandTotalInvoiced\n      baseGrandTotalInvoiced\n      grandTotalRefunded\n      baseGrandTotalRefunded\n      subTotal\n      baseSubTotal\n      subTotalInvoiced\n      baseSubTotalInvoiced\n      subTotalRefunded\n      baseSubTotalRefunded\n      discountPercent\n      discountAmount\n      baseDiscountAmount\n      discountInvoiced\n      baseDiscountInvoiced\n      discountRefunded\n      baseDiscountRefunded\n      taxAmount\n      baseTaxAmount\n      taxAmountInvoiced\n      baseTaxAmountInvoiced\n      taxAmountRefunded\n      baseTaxAmountRefunded\n      shippingAmount\n      baseShippingAmount\n      shippingInvoiced\n      baseShippingInvoiced\n      shippingRefunded\n      baseShippingRefunded\n      shippingDiscountAmount\n      baseShippingDiscountAmount\n      shippingTaxAmount\n      baseShippingTaxAmount\n      shippingTaxRefunded\n      baseShippingTaxRefunded\n      subTotalInclTax\n      baseSubTotalInclTax\n      shippingAmountInclTax\n      baseShippingAmountInclTax\n      customerId\n      customerType\n      channelId\n      channelType\n      cartId\n      appliedCartRuleIds\n      createdAt\n      updatedAt\n      customerFullName\n    }\n  }\n}\n",
+                                                "query": "query CustomerDownloadableProduct($id: ID!) {\n  customerDownloadableProduct(id: $id) {\n    id\n    _id\n    productName\n    name\n    url\n    file\n    fileName\n    type\n    downloadBought\n    downloadUsed\n    status\n    downloadCanceled\n    createdAt\n    updatedAt\n    remainingDownloads\n    downloadUrl\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      name\n    }\n    order {\n      id\n      _id\n      incrementId\n      status\n      channelName\n      isGuest\n      customerEmail\n      customerFirstName\n      customerLastName\n      shippingMethod\n      shippingTitle\n      shippingDescription\n      couponCode\n      isGift\n      totalItemCount\n      totalQtyOrdered\n      baseCurrencyCode\n      channelCurrencyCode\n      orderCurrencyCode\n      grandTotal\n      baseGrandTotal\n      grandTotalInvoiced\n      baseGrandTotalInvoiced\n      grandTotalRefunded\n      baseGrandTotalRefunded\n      subTotal\n      baseSubTotal\n      subTotalInvoiced\n      baseSubTotalInvoiced\n      subTotalRefunded\n      baseSubTotalRefunded\n      discountPercent\n      discountAmount\n      baseDiscountAmount\n      discountInvoiced\n      baseDiscountInvoiced\n      discountRefunded\n      baseDiscountRefunded\n      taxAmount\n      baseTaxAmount\n      taxAmountInvoiced\n      baseTaxAmountInvoiced\n      taxAmountRefunded\n      baseTaxAmountRefunded\n      shippingAmount\n      baseShippingAmount\n      shippingInvoiced\n      baseShippingInvoiced\n      shippingRefunded\n      baseShippingRefunded\n      shippingDiscountAmount\n      baseShippingDiscountAmount\n      shippingTaxAmount\n      baseShippingTaxAmount\n      shippingTaxRefunded\n      baseShippingTaxRefunded\n      subTotalInclTax\n      baseSubTotalInclTax\n      shippingAmountInclTax\n      baseShippingAmountInclTax\n      customerId\n      customerType\n      channelId\n      channelType\n      cartId\n      appliedCartRuleIds\n      createdAt\n      updatedAt\n      customerFullName\n    }\n  }\n}\n",
                                                 "variables": "{\n    \"id\": \"1\"\n}"
                                             }
                                         },
@@ -12166,7 +12199,7 @@
                                         "body": {
                                             "mode": "graphql",
                                             "graphql": {
-                                                "query": "query CustomerReview($id: ID!) {\n  customerReview(id: $id) {\n    id\n    _id\n    name\n    title\n    rating\n    comment\n    status\n    createdAt\n    updatedAt\n    product {\n      id\n      _id\n      sku\n      type\n      additional\n      createdAt\n      updatedAt\n      isSaleable\n      locale\n      channel\n      index\n      combinations\n      superAttributeOptions\n      bookingType\n      name\n      urlKey\n      status\n      description\n      descriptionHtml\n      shortDescription\n      price\n      specialPrice\n      weight\n      productNumber\n      new\n      featured\n      visibleIndividually\n      guestCheckout\n      manageStock\n      metaTitle\n      metaKeywords\n      taxCategoryId\n      specialPriceFrom\n      specialPriceTo\n      cost\n      metaDescription\n      length\n      width\n      height\n      color\n      size\n      brand\n      minimumPrice\n      maximumPrice\n      regularMinimumPrice\n      regularMaximumPrice\n      formattedPrice\n      formattedSpecialPrice\n      formattedMinimumPrice\n      formattedMaximumPrice\n      formattedRegularMinimumPrice\n      formattedRegularMaximumPrice\n      isInWishlist\n      isInCompare\n      baseImageUrl\n    }\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      deviceToken\n      name\n    }\n  }\n}\n",
+                                                "query": "query CustomerReview($id: ID!) {\n  customerReview(id: $id) {\n    id\n    _id\n    name\n    title\n    rating\n    comment\n    status\n    createdAt\n    updatedAt\n    product {\n      id\n      _id\n      sku\n      type\n      additional\n      createdAt\n      updatedAt\n      isSaleable\n      locale\n      channel\n      index\n      combinations\n      superAttributeOptions\n      bookingType\n      name\n      urlKey\n      status\n      description\n      descriptionHtml\n      shortDescription\n      price\n      specialPrice\n      weight\n      productNumber\n      new\n      featured\n      visibleIndividually\n      guestCheckout\n      manageStock\n      metaTitle\n      metaKeywords\n      taxCategoryId\n      specialPriceFrom\n      specialPriceTo\n      cost\n      metaDescription\n      length\n      width\n      height\n      color\n      size\n      brand\n      minimumPrice\n      maximumPrice\n      regularMinimumPrice\n      regularMaximumPrice\n      formattedPrice\n      formattedSpecialPrice\n      formattedMinimumPrice\n      formattedMaximumPrice\n      formattedRegularMinimumPrice\n      formattedRegularMaximumPrice\n      isInWishlist\n      isInCompare\n      baseImageUrl\n    }\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      name\n    }\n  }\n}\n",
                                                 "variables": "{\n    \"id\": \"1\"\n}"
                                             }
                                         },
@@ -12321,6 +12354,40 @@
                                                 "variables": "{\n    \"id\": \"1\"\n}"
                                             }
                                         }
+                                    }
+                                },
+                                {
+                                    "name": "euWithdrawalStatus",
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "key": "X-STOREFRONT-KEY",
+                                                "value": "{{storefrontKey}}"
+                                            }
+                                        ],
+                                        "url": {
+                                            "raw": "{{url}}/api/graphql",
+                                            "host": [
+                                                "{{url}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "graphql"
+                                            ]
+                                        },
+                                        "body": {
+                                            "mode": "graphql",
+                                            "graphql": {
+                                                "query": "query EuWithdrawalStatus {\n  euWithdrawalStatus {\n    id\n    _id\n    channel\n    enabled\n  }\n}\n",
+                                                "variables": "{}"
+                                            }
+                                        },
+                                        "description": "Whether the EU right of withdrawal is enabled on the current channel."
                                     }
                                 },
                                 {
@@ -12500,7 +12567,7 @@
                                         "body": {
                                             "mode": "graphql",
                                             "graphql": {
-                                                "query": "query GdprRequest($id: ID!) {\n  gdprRequest(id: $id) {\n    id\n    _id\n    email\n    status\n    type\n    message\n    revokedAt\n    createdAt\n    updatedAt\n    successMessage\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      deviceToken\n      name\n    }\n  }\n}\n",
+                                                "query": "query GdprRequest($id: ID!) {\n  gdprRequest(id: $id) {\n    id\n    _id\n    email\n    status\n    type\n    message\n    revokedAt\n    createdAt\n    updatedAt\n    successMessage\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      name\n    }\n  }\n}\n",
                                                 "variables": "{\n    \"id\": \"1\"\n}"
                                             }
                                         }
@@ -12537,6 +12604,40 @@
                                                 "variables": "{\n    \"first\": 10\n}"
                                             }
                                         }
+                                    }
+                                },
+                                {
+                                    "name": "gdprStatus",
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "key": "X-STOREFRONT-KEY",
+                                                "value": "{{storefrontKey}}"
+                                            }
+                                        ],
+                                        "url": {
+                                            "raw": "{{url}}/api/graphql",
+                                            "host": [
+                                                "{{url}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "graphql"
+                                            ]
+                                        },
+                                        "body": {
+                                            "mode": "graphql",
+                                            "graphql": {
+                                                "query": "query GdprStatus {\n  gdprStatus {\n    id\n    _id\n    channel\n    enabled\n  }\n}\n",
+                                                "variables": "{}"
+                                            }
+                                        },
+                                        "description": "Whether GDPR data requests are enabled on the current channel."
                                     }
                                 }
                             ]
@@ -13397,50 +13498,6 @@
                     ]
                 },
                 {
-                    "name": "Storefront",
-                    "item": [
-                        {
-                            "name": "Queries",
-                            "item": [
-                                {
-                                    "name": "storefrontFeature",
-                                    "request": {
-                                        "method": "POST",
-                                        "header": [
-                                            {
-                                                "key": "Content-Type",
-                                                "value": "application/json"
-                                            },
-                                            {
-                                                "key": "X-STOREFRONT-KEY",
-                                                "value": "{{storefrontKey}}"
-                                            }
-                                        ],
-                                        "url": {
-                                            "raw": "{{url}}/api/graphql",
-                                            "host": [
-                                                "{{url}}"
-                                            ],
-                                            "path": [
-                                                "api",
-                                                "graphql"
-                                            ]
-                                        },
-                                        "body": {
-                                            "mode": "graphql",
-                                            "graphql": {
-                                                "query": "query StorefrontFeature {\n  storefrontFeature {\n    id\n    _id\n    channel\n    gdpr\n    euWithdrawal\n  }\n}\n",
-                                                "variables": "{}"
-                                            }
-                                        },
-                                        "description": "The optional storefront features this channel has switched on."
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
                     "name": "Theme",
                     "item": [
                         {
@@ -13792,7 +13849,7 @@
                                         "body": {
                                             "mode": "graphql",
                                             "graphql": {
-                                                "query": "query Wishlist($id: ID!) {\n  wishlist(id: $id) {\n    id\n    _id\n    additional\n    movedToCart\n    shared\n    createdAt\n    updatedAt\n    message\n    product {\n      id\n      _id\n      sku\n      type\n      additional\n      createdAt\n      updatedAt\n      isSaleable\n      locale\n      channel\n      index\n      combinations\n      superAttributeOptions\n      bookingType\n      name\n      urlKey\n      status\n      description\n      descriptionHtml\n      shortDescription\n      price\n      specialPrice\n      weight\n      productNumber\n      new\n      featured\n      visibleIndividually\n      guestCheckout\n      manageStock\n      metaTitle\n      metaKeywords\n      taxCategoryId\n      specialPriceFrom\n      specialPriceTo\n      cost\n      metaDescription\n      length\n      width\n      height\n      color\n      size\n      brand\n      minimumPrice\n      maximumPrice\n      regularMinimumPrice\n      regularMaximumPrice\n      formattedPrice\n      formattedSpecialPrice\n      formattedMinimumPrice\n      formattedMaximumPrice\n      formattedRegularMinimumPrice\n      formattedRegularMaximumPrice\n      isInWishlist\n      isInCompare\n      baseImageUrl\n    }\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      deviceToken\n      name\n    }\n    channel {\n      id\n      _id\n      code\n      timezone\n      theme\n      hostname\n      logo\n      favicon\n      homeSeo\n      isMaintenanceOn\n      allowedIps\n      createdAt\n      updatedAt\n      logoUrl\n      faviconUrl\n      logoFileName\n      faviconFileName\n    }\n  }\n}\n",
+                                                "query": "query Wishlist($id: ID!) {\n  wishlist(id: $id) {\n    id\n    _id\n    additional\n    movedToCart\n    shared\n    createdAt\n    updatedAt\n    message\n    product {\n      id\n      _id\n      sku\n      type\n      additional\n      createdAt\n      updatedAt\n      isSaleable\n      locale\n      channel\n      index\n      combinations\n      superAttributeOptions\n      bookingType\n      name\n      urlKey\n      status\n      description\n      descriptionHtml\n      shortDescription\n      price\n      specialPrice\n      weight\n      productNumber\n      new\n      featured\n      visibleIndividually\n      guestCheckout\n      manageStock\n      metaTitle\n      metaKeywords\n      taxCategoryId\n      specialPriceFrom\n      specialPriceTo\n      cost\n      metaDescription\n      length\n      width\n      height\n      color\n      size\n      brand\n      minimumPrice\n      maximumPrice\n      regularMinimumPrice\n      regularMaximumPrice\n      formattedPrice\n      formattedSpecialPrice\n      formattedMinimumPrice\n      formattedMaximumPrice\n      formattedRegularMinimumPrice\n      formattedRegularMaximumPrice\n      isInWishlist\n      isInCompare\n      baseImageUrl\n    }\n    customer {\n      id\n      _id\n      firstName\n      lastName\n      gender\n      dateOfBirth\n      email\n      phone\n      status\n      apiToken\n      customerGroupId\n      channelId\n      subscribedToNewsLetter\n      isVerified\n      isSuspended\n      token\n      rememberToken\n      name\n    }\n    channel {\n      id\n      _id\n      code\n      timezone\n      theme\n      hostname\n      logo\n      favicon\n      homeSeo\n      isMaintenanceOn\n      allowedIps\n      createdAt\n      updatedAt\n      logoUrl\n      faviconUrl\n      logoFileName\n      faviconFileName\n    }\n  }\n}\n",
                                                 "variables": "{\n    \"id\": \"1\"\n}"
                                             }
                                         },

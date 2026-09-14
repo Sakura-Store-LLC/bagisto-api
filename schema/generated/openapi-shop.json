@@ -9801,7 +9801,7 @@
                     }
                 },
                 "summary": "Send a message on a return request",
-                "description": "Adds a customer message to the RMA conversation. Body `{ return_id, message }`; an optional file can be attached by sending the body as `multipart/form-data` with the file in `file` (REST only). Returns the created message, with `attachment` and `attachmentUrl` set when a file was sent.",
+                "description": "Sends a message on a return. Attach a file in `file`.",
                 "parameters": [
                     {
                         "name": "X-STOREFRONT-KEY",
@@ -9863,25 +9863,6 @@
                 "requestBody": {
                     "description": "The new CustomerReturnMessage resource",
                     "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "return_id",
-                                    "message"
-                                ],
-                                "properties": {
-                                    "return_id": {
-                                        "type": "integer",
-                                        "example": 12
-                                    },
-                                    "message": {
-                                        "type": "string",
-                                        "example": "Any update on my return?"
-                                    }
-                                }
-                            }
-                        },
                         "multipart/form-data": {
                             "schema": {
                                 "type": "object",
@@ -9902,6 +9883,25 @@
                                         "type": "string",
                                         "format": "binary",
                                         "description": "Attachment for this message."
+                                    }
+                                }
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "return_id",
+                                    "message"
+                                ],
+                                "properties": {
+                                    "return_id": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Any update on my return?"
                                     }
                                 }
                             }
@@ -10455,7 +10455,7 @@
                     }
                 },
                 "summary": "Raise a new return (RMA) request",
-                "description": "Creates a return for one item of one of the customer's orders. The item must be return-eligible (see /returnable-items?order_id=), and `order_item_id` is the **order item** id from that endpoint, not the product id; `rmaQty` is capped server-side by the returnable quantity. Send `agreement=true`. `package_condition` must be `open` or `packed`. Answer the return form's custom fields with `custom_attributes`, keyed by the field id from /return-custom-fields — required fields are enforced. Send as `multipart/form-data` to attach evidence images as `images[]` (REST only; the mime types allowed by the RMA configuration). Returns the created RMA.",
+                "description": "Raises a return for one returnable order item. Attach evidence images in `images[]`.",
                 "parameters": [
                     {
                         "name": "X-STOREFRONT-KEY",
@@ -10517,6 +10517,74 @@
                 "requestBody": {
                     "description": "The new CustomerReturn resource",
                     "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "order_id",
+                                    "order_item_id",
+                                    "rma_qty",
+                                    "resolution_type",
+                                    "rma_reason_id",
+                                    "agreement"
+                                ],
+                                "properties": {
+                                    "order_id": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "order_item_id": {
+                                        "type": "integer",
+                                        "example": 45
+                                    },
+                                    "rma_qty": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "resolution_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "return",
+                                            "cancel_items"
+                                        ],
+                                        "example": "return"
+                                    },
+                                    "rma_reason_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "information": {
+                                        "type": "string",
+                                        "example": "Item arrived damaged."
+                                    },
+                                    "package_condition": {
+                                        "type": "string",
+                                        "enum": [
+                                            "open",
+                                            "packed"
+                                        ],
+                                        "example": "open"
+                                    },
+                                    "custom_attributes": {
+                                        "type": "string",
+                                        "description": "JSON object keyed by custom field id.",
+                                        "example": "{\"1\":\"INV-9921\"}"
+                                    },
+                                    "agreement": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "images[]": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        },
+                                        "description": "Evidence images."
+                                    }
+                                }
+                            }
+                        },
                         "application/json": {
                             "schema": {
                                 "type": "object",
@@ -10578,74 +10646,6 @@
                                     "agreement": {
                                         "type": "boolean",
                                         "example": true
-                                    }
-                                }
-                            }
-                        },
-                        "multipart/form-data": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "order_id",
-                                    "order_item_id",
-                                    "rma_qty",
-                                    "resolution_type",
-                                    "rma_reason_id",
-                                    "agreement"
-                                ],
-                                "properties": {
-                                    "order_id": {
-                                        "type": "integer",
-                                        "example": 12
-                                    },
-                                    "order_item_id": {
-                                        "type": "integer",
-                                        "example": 45
-                                    },
-                                    "rma_qty": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "resolution_type": {
-                                        "type": "string",
-                                        "enum": [
-                                            "return",
-                                            "cancel_items"
-                                        ],
-                                        "example": "return"
-                                    },
-                                    "rma_reason_id": {
-                                        "type": "integer",
-                                        "example": 2
-                                    },
-                                    "information": {
-                                        "type": "string",
-                                        "example": "Item arrived damaged."
-                                    },
-                                    "package_condition": {
-                                        "type": "string",
-                                        "enum": [
-                                            "open",
-                                            "packed"
-                                        ],
-                                        "example": "open"
-                                    },
-                                    "custom_attributes": {
-                                        "type": "object",
-                                        "example": {
-                                            "1": "INV-9921"
-                                        }
-                                    },
-                                    "agreement": {
-                                        "type": "boolean",
-                                        "example": true
-                                    },
-                                    "images": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "binary"
-                                        }
                                     }
                                 }
                             }
@@ -12073,6 +12073,90 @@
                 }
             }
         },
+        "/eu-withdrawal-status": {
+            "get": {
+                "operationId": "api_apishopeu-withdrawal-status_get_collection",
+                "tags": [
+                    "EU Withdrawal"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The EU withdrawal setting of the current channel.",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "default",
+                                        "channel": "default",
+                                        "enabled": false
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Check whether EU withdrawal is enabled",
+                "description": "Returns whether customers can file an EU withdrawal on the current channel.",
+                "parameters": [
+                    {
+                        "name": "X-STOREFRONT-KEY",
+                        "in": "header",
+                        "description": "Storefront API Key for authentication. Required for all shop/storefront API requests.",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Locale",
+                        "in": "header",
+                        "description": "Locale code for localized data (e.g. \"en\", \"fr\", \"ar\"). Defaults to channel's default locale.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Channel",
+                        "in": "header",
+                        "description": "Channel code (e.g. \"default\"). Defaults to the current channel.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Currency",
+                        "in": "header",
+                        "description": "Currency code (e.g. \"USD\", \"EUR\", \"INR\"). Defaults to channel's base currency.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "USD"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ]
+            }
+        },
         "/eu-withdrawals": {
             "get": {
                 "operationId": "api_apishopeu-withdrawals_get_collection",
@@ -13157,6 +13241,90 @@
                     },
                     "required": false
                 }
+            }
+        },
+        "/gdpr-status": {
+            "get": {
+                "operationId": "api_apishopgdpr-status_get_collection",
+                "tags": [
+                    "GDPR Requests"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The GDPR setting of the current channel.",
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "id": "default",
+                                        "channel": "default",
+                                        "enabled": true
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Check whether GDPR requests are enabled",
+                "description": "Returns whether customers can raise GDPR data requests on the current channel.",
+                "parameters": [
+                    {
+                        "name": "X-STOREFRONT-KEY",
+                        "in": "header",
+                        "description": "Storefront API Key for authentication. Required for all shop/storefront API requests.",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Locale",
+                        "in": "header",
+                        "description": "Locale code for localized data (e.g. \"en\", \"fr\", \"ar\"). Defaults to channel's default locale.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Channel",
+                        "in": "header",
+                        "description": "Channel code (e.g. \"default\"). Defaults to the current channel.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "default"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    },
+                    {
+                        "name": "X-Currency",
+                        "in": "header",
+                        "description": "Currency code (e.g. \"USD\", \"EUR\", \"INR\"). Defaults to channel's base currency.",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "USD"
+                        },
+                        "style": "simple",
+                        "explode": false
+                    }
+                ]
             }
         },
         "/locales": {
@@ -19577,91 +19745,6 @@
                 ]
             }
         },
-        "/features": {
-            "get": {
-                "operationId": "api_apishopfeatures_get_collection",
-                "tags": [
-                    "Storefront"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The feature flags of the current channel.",
-                        "content": {
-                            "application/json": {
-                                "example": [
-                                    {
-                                        "id": "default",
-                                        "channel": "default",
-                                        "gdpr": true,
-                                        "euWithdrawal": false
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                },
-                "summary": "Which optional features this channel has switched on",
-                "description": "Tells a storefront which optional features the store has enabled, so it can decide what to render before calling anything that might refuse. Both flags are read per channel from the admin configuration. Call this once on boot rather than probing an endpoint and reading its error. Returns: `gdpr` — whether customers may raise GDPR data requests (`/api/shop/gdpr-requests`); `euWithdrawal` — whether the EU right-of-withdrawal form is offered on orders (`/api/shop/eu-withdrawals`). Returns are not listed: Bagisto has no master switch for them, so whether a customer can return anything is answered per order by `/api/shop/returnable-orders`. Public endpoint.",
-                "parameters": [
-                    {
-                        "name": "X-STOREFRONT-KEY",
-                        "in": "header",
-                        "description": "Storefront API Key for authentication. Required for all shop/storefront API requests.",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string",
-                            "example": ""
-                        },
-                        "style": "simple",
-                        "explode": false
-                    },
-                    {
-                        "name": "X-Locale",
-                        "in": "header",
-                        "description": "Locale code for localized data (e.g. \"en\", \"fr\", \"ar\"). Defaults to channel's default locale.",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "en"
-                        },
-                        "style": "simple",
-                        "explode": false
-                    },
-                    {
-                        "name": "X-Channel",
-                        "in": "header",
-                        "description": "Channel code (e.g. \"default\"). Defaults to the current channel.",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "default"
-                        },
-                        "style": "simple",
-                        "explode": false
-                    },
-                    {
-                        "name": "X-Currency",
-                        "in": "header",
-                        "description": "Currency code (e.g. \"USD\", \"EUR\", \"INR\"). Defaults to channel's base currency.",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "USD"
-                        },
-                        "style": "simple",
-                        "explode": false
-                    }
-                ]
-            }
-        },
         "/sections": {
             "get": {
                 "operationId": "api_apishopsections_get_collection",
@@ -23965,9 +24048,6 @@
         },
         {
             "name": "Theme"
-        },
-        {
-            "name": "Storefront"
         }
     ],
     "webhooks": []
