@@ -34,16 +34,12 @@ final class PathGatedResourceNameCollectionFactory implements ResourceNameCollec
 
     private function shouldEnumerate(): bool
     {
-        // Composer package discovery only builds Laravel's provider manifest.
-        // Enumerating API Platform resources here can trigger Eloquent schema
-        // introspection before a database is available in an image build.
-        if ($this->isPackageDiscovery()) {
-            return false;
-        }
-
-        // route:cache / warm-cache / route:list must see every resource.
+        // Only console commands that explicitly need API schema/routes should
+        // enumerate resources. Commands such as package:discover, migrate,
+        // config:cache, queue workers, and schedulers must not require a live
+        // catalog schema just to bootstrap Laravel.
         if (app()->runningInConsole()) {
-            return true;
+            return $this->consoleCommandRequiresResources();
         }
 
         // No HTTP request context — never gate.
@@ -56,13 +52,16 @@ final class PathGatedResourceNameCollectionFactory implements ResourceNameCollec
         return $path === 'api' || str_starts_with($path, 'api/');
     }
 
-    private function isPackageDiscovery(): bool
+    private function consoleCommandRequiresResources(): bool
     {
-        if (! app()->runningInConsole()) {
-            return false;
-        }
+        $command = $_SERVER['argv'][1] ?? null;
 
-        return in_array('package:discover', $_SERVER['argv'] ?? [], true);
+        return in_array($command, [
+            'route:cache',
+            'route:list',
+            'bagisto-api-platform:warm-cache',
+            'bagisto-api-platform:optimize',
+            'bagisto-api-platform:export-schema',
+        ], true);
     }
-
 }
