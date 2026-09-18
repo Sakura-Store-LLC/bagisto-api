@@ -192,6 +192,52 @@ class Category extends BaseCategory
         return $this->translation;
     }
 
+    #[ApiProperty(description: 'Current locale category name')]
+    public function getLocalizedName(): ?string
+    {
+        return $this->localizedTranslation()?->name;
+    }
+
+    #[ApiProperty(description: 'Current locale category slug')]
+    public function getLocalizedSlug(): ?string
+    {
+        return $this->localizedTranslation()?->slug;
+    }
+
+    #[ApiProperty(description: 'Current locale category URL path')]
+    public function getLocalizedUrlPath(): ?string
+    {
+        return $this->localizedTranslation()?->url_path;
+    }
+
+    #[ApiProperty(description: 'Current locale category description')]
+    public function getLocalizedDescription(): ?string
+    {
+        return $this->localizedTranslation()?->description;
+    }
+
+    #[ApiProperty(description: 'Current locale category meta title')]
+    public function getLocalizedMetaTitle(): ?string
+    {
+        return $this->localizedTranslation()?->meta_title;
+    }
+
+    #[ApiProperty(description: 'Current locale category meta description')]
+    public function getLocalizedMetaDescription(): ?string
+    {
+        return $this->localizedTranslation()?->meta_description;
+    }
+
+    private function localizedTranslation(): ?\Webkul\Category\Models\CategoryTranslation
+    {
+        try {
+            return $this->translate(core()->getCurrentLocale()->code)
+                ?? $this->translate(core()->getDefaultLocaleCodeFromDefaultChannel());
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
     /**
      * Override core Category::getUrlAttribute() — when the translated slug is
      * null (no translation row, common for newly-created categories or admin
