@@ -406,7 +406,7 @@ class ApiStateBindingsServiceProvider extends ServiceProvider
         $this->app->tag(ForgotPasswordProcessor::class, ProcessorInterface::class);
         $this->app->tag(AdminProfileProvider::class, ProviderInterface::class);
         $this->tagRmaService(CustomerReturnProvider::class, ProviderInterface::class);
-        $this->app->tag(EuWithdrawalProvider::class, ProviderInterface::class);
+        $this->tagEuWithdrawalService(EuWithdrawalProvider::class, ProviderInterface::class);
         $this->tagRmaService(ReturnableItemProvider::class, ProviderInterface::class);
         $this->tagRmaService(ReturnableOrderProvider::class, ProviderInterface::class);
         $this->app->tag(FeatureStatusProvider::class, ProviderInterface::class);
@@ -444,12 +444,12 @@ class ApiStateBindingsServiceProvider extends ServiceProvider
         $this->tagRmaService(AdminRmaCustomFieldProcessor::class, ProcessorInterface::class);
         $this->tagRmaService(AdminRmaCustomFieldMassDeleteProcessor::class, ProcessorInterface::class);
         $this->tagRmaService(AdminRmaCustomFieldMassUpdateStatusProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminEuWithdrawalCollectionProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminEuWithdrawalItemProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminEuWithdrawalWriteProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminEuWithdrawalProcessor::class, ProcessorInterface::class);
+        $this->tagEuWithdrawalService(AdminEuWithdrawalCollectionProvider::class, ProviderInterface::class);
+        $this->tagEuWithdrawalService(AdminEuWithdrawalItemProvider::class, ProviderInterface::class);
+        $this->tagEuWithdrawalService(AdminEuWithdrawalWriteProvider::class, ProviderInterface::class);
+        $this->tagEuWithdrawalService(AdminEuWithdrawalProcessor::class, ProcessorInterface::class);
         $this->tagRmaService(CustomerReturnProcessor::class, ProcessorInterface::class);
-        $this->app->tag(EuWithdrawalProcessor::class, ProcessorInterface::class);
+        $this->tagEuWithdrawalService(EuWithdrawalProcessor::class, ProcessorInterface::class);
         $this->tagRmaService(CustomerReturnMessageProcessor::class, ProcessorInterface::class);
         $this->app->tag(OrderCollectionProvider::class, ProviderInterface::class);
         $this->app->tag(OrderDetailProvider::class, ProviderInterface::class);
@@ -795,6 +795,15 @@ class ApiStateBindingsServiceProvider extends ServiceProvider
     private function tagRmaService(string $abstract, string $tag): void
     {
         if (! class_exists(\Webkul\RMA\Repositories\RMARepository::class)) {
+            return;
+        }
+
+        $this->app->tag($abstract, $tag);
+    }
+
+    private function tagEuWithdrawalService(string $abstract, string $tag): void
+    {
+        if (! class_exists(\Webkul\EUWithdrawal\Services\WithdrawalService::class)) {
             return;
         }
 
