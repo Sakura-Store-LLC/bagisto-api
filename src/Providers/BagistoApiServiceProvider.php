@@ -205,7 +205,9 @@ class BagistoApiServiceProvider extends ServiceProvider
         // Registered first: the resource gate and the state bindings both read it.
         $this->app->singleton(CoreCapabilities::class);
 
-        $this->registerAdminApiGuardConfig();
+        if (! $this->isStorefrontOnly()) {
+            $this->registerAdminApiGuardConfig();
+        }
 
         $this->mergeConfigFrom(__DIR__.'/../Admin/Config/audit.php', 'bagistoapi.audit');
 
@@ -216,7 +218,9 @@ class BagistoApiServiceProvider extends ServiceProvider
 
         config(['responsecache.cache_profile' => ApiAwareResponseCache::class]);
 
-        $this->mergeAdminConfigs();
+        if (! $this->isStorefrontOnly()) {
+            $this->mergeAdminConfigs();
+        }
 
         $this->registerSnakeCaseLinksHandlerFix();
 
@@ -814,11 +818,13 @@ class BagistoApiServiceProvider extends ServiceProvider
             });
         }
 
-        $this->app->singleton(AdminGraphQLEntrypointController::class, function ($app) use ($scopedEntrypoint) {
-            return new AdminGraphQLEntrypointController(
-                $scopedEntrypoint($app, true)
-            );
-        });
+        if (! $this->isStorefrontOnly()) {
+            $this->app->singleton(AdminGraphQLEntrypointController::class, function ($app) use ($scopedEntrypoint) {
+                return new AdminGraphQLEntrypointController(
+                    $scopedEntrypoint($app, true)
+                );
+            });
+        }
     }
 
     protected function registerModelSubstitutions(): void
@@ -840,15 +846,17 @@ class BagistoApiServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'bagistoapi');
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+        $this->loadMigrationsFrom($this->migrationPath());
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'webkul');
 
         $this->registerModelSubstitutions();
 
-        $this->bootAdminIntegration();
+        if (! $this->isStorefrontOnly()) {
+            $this->bootAdminIntegration();
 
-        if (config('bagistoapi.audit.enabled', true)) {
-            $this->app->make(AdminApiAuditRecorder::class)->register();
+            if (config('bagistoapi.audit.enabled', true)) {
+                $this->app->make(AdminApiAuditRecorder::class)->register();
+            }
         }
 
         if ($this->isRunningAsVendorPackage()) {
@@ -904,23 +912,27 @@ class BagistoApiServiceProvider extends ServiceProvider
             SwaggerUIController::class, 'shopApi',
         ])->name('bagistoapi.shop-docs')->where('_format', '^(?!json|xml|csv)');
 
-        Route::get('/api/admin', [
-            SwaggerUIController::class, 'adminApi',
-        ])->name('bagistoapi.admin-docs')->where('_format', '^(?!json|xml|csv)');
-
         Route::get('/api/shop/docs', [
             SwaggerUIController::class, 'shopApiDocs',
         ])->name('bagistoapi.shop-api-spec');
-
-        Route::get('/api/admin/docs', [
-            SwaggerUIController::class, 'adminApiDocs',
-        ])->name('bagistoapi.admin-api-spec');
 
         Route::get('/api/graphiql', GraphQLPlaygroundController::class)
             ->name('bagistoapi.graphql-playground');
 
         Route::get('/api/graphql', GraphQLPlaygroundController::class)
             ->name('bagistoapi.api-graphql-playground');
+
+        if ($this->isStorefrontOnly()) {
+            return;
+        }
+
+        Route::get('/api/admin', [
+            SwaggerUIController::class, 'adminApi',
+        ])->name('bagistoapi.admin-docs')->where('_format', '^(?!json|xml|csv)');
+
+        Route::get('/api/admin/docs', [
+            SwaggerUIController::class, 'adminApiDocs',
+        ])->name('bagistoapi.admin-api-spec');
 
         Route::get('/api/admin/graphiql', AdminGraphQLPlaygroundController::class)
             ->name('bagistoapi.admin-graphql-playground');
@@ -960,6 +972,18 @@ class BagistoApiServiceProvider extends ServiceProvider
     {
         if ($this->app->bound('api_platform.metadata_factory')) {
         }
+    }
+
+    protected function isStorefrontOnly(): bool
+    {
+        return (bool) config('bagistoapi.storefront_only', false);
+    }
+
+    protected function migrationPath(): string
+    {
+        return $this->isStorefrontOnly()
+            ? __DIR__.'/../Database/StorefrontMigrations'
+            : __DIR__.'/../Database/Migrations';
     }
 
     protected function isRmaAvailable(): bool
@@ -1148,6 +1172,10 @@ class BagistoApiServiceProvider extends ServiceProvider
 
     public function isIntegrationModuleEnabled(): bool
     {
+        if ($this->isStorefrontOnly()) {
+            return false;
+        }
+
         try {
             $value = core()->getConfigData('api.integration.settings.enabled');
         } catch (\Throwable $e) {
