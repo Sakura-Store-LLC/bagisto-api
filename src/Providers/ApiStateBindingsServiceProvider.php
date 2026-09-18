@@ -405,52 +405,52 @@ class ApiStateBindingsServiceProvider extends ServiceProvider
         $this->app->tag(LogoutProcessor::class, ProcessorInterface::class);
         $this->app->tag(ForgotPasswordProcessor::class, ProcessorInterface::class);
         $this->app->tag(AdminProfileProvider::class, ProviderInterface::class);
-        $this->app->tag(CustomerReturnProvider::class, ProviderInterface::class);
+        $this->tagRmaService(CustomerReturnProvider::class, ProviderInterface::class);
         $this->app->tag(EuWithdrawalProvider::class, ProviderInterface::class);
-        $this->app->tag(ReturnableItemProvider::class, ProviderInterface::class);
-        $this->app->tag(ReturnableOrderProvider::class, ProviderInterface::class);
+        $this->tagRmaService(ReturnableItemProvider::class, ProviderInterface::class);
+        $this->tagRmaService(ReturnableOrderProvider::class, ProviderInterface::class);
         $this->app->tag(FeatureStatusProvider::class, ProviderInterface::class);
-        $this->app->tag(ReturnCustomFieldProvider::class, ProviderInterface::class);
-        $this->app->tag(ReturnReasonProvider::class, ProviderInterface::class);
-        $this->app->tag(CustomerReturnMessageProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminReturnCollectionProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminReturnItemProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminReturnableItemProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminReturnReasonProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminReturnProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminReturnMessageProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminReturnMessageProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaReasonCollectionProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaReasonItemProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaReasonWriteProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaReasonProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaReasonMassDeleteProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaReasonMassUpdateStatusProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaStatusCollectionProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaStatusItemProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaStatusWriteProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaStatusProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaStatusMassDeleteProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaStatusMassUpdateStatusProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaRuleCollectionProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaRuleItemProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaRuleWriteProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaRuleProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaRuleMassDeleteProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaRuleMassUpdateStatusProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaCustomFieldCollectionProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaCustomFieldItemProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaCustomFieldWriteProvider::class, ProviderInterface::class);
-        $this->app->tag(AdminRmaCustomFieldProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaCustomFieldMassDeleteProcessor::class, ProcessorInterface::class);
-        $this->app->tag(AdminRmaCustomFieldMassUpdateStatusProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(ReturnCustomFieldProvider::class, ProviderInterface::class);
+        $this->tagRmaService(ReturnReasonProvider::class, ProviderInterface::class);
+        $this->tagRmaService(CustomerReturnMessageProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminReturnCollectionProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminReturnItemProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminReturnableItemProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminReturnReasonProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminReturnProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminReturnMessageProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminReturnMessageProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaReasonCollectionProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaReasonItemProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaReasonWriteProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaReasonProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaReasonMassDeleteProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaReasonMassUpdateStatusProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaStatusCollectionProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaStatusItemProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaStatusWriteProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaStatusProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaStatusMassDeleteProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaStatusMassUpdateStatusProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaRuleCollectionProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaRuleItemProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaRuleWriteProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaRuleProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaRuleMassDeleteProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaRuleMassUpdateStatusProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaCustomFieldCollectionProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaCustomFieldItemProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaCustomFieldWriteProvider::class, ProviderInterface::class);
+        $this->tagRmaService(AdminRmaCustomFieldProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaCustomFieldMassDeleteProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(AdminRmaCustomFieldMassUpdateStatusProcessor::class, ProcessorInterface::class);
         $this->app->tag(AdminEuWithdrawalCollectionProvider::class, ProviderInterface::class);
         $this->app->tag(AdminEuWithdrawalItemProvider::class, ProviderInterface::class);
         $this->app->tag(AdminEuWithdrawalWriteProvider::class, ProviderInterface::class);
         $this->app->tag(AdminEuWithdrawalProcessor::class, ProcessorInterface::class);
-        $this->app->tag(CustomerReturnProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(CustomerReturnProcessor::class, ProcessorInterface::class);
         $this->app->tag(EuWithdrawalProcessor::class, ProcessorInterface::class);
-        $this->app->tag(CustomerReturnMessageProcessor::class, ProcessorInterface::class);
+        $this->tagRmaService(CustomerReturnMessageProcessor::class, ProcessorInterface::class);
         $this->app->tag(OrderCollectionProvider::class, ProviderInterface::class);
         $this->app->tag(OrderDetailProvider::class, ProviderInterface::class);
         $this->app->tag(AdminReorderProcessor::class, ProcessorInterface::class);
@@ -791,4 +791,14 @@ class ApiStateBindingsServiceProvider extends ServiceProvider
         $this->app->tag(AdminMenuProvider::class, ProviderInterface::class);
         $this->app->tag(AdminPermissionsProvider::class, ProviderInterface::class);
     }
+
+    private function tagRmaService(string $abstract, string $tag): void
+    {
+        if (! class_exists(\Webkul\RMA\Repositories\RMARepository::class)) {
+            return;
+        }
+
+        $this->app->tag($abstract, $tag);
+    }
+
 }

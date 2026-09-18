@@ -286,61 +286,63 @@ class BagistoApiServiceProvider extends ServiceProvider
         if ($this->isEuWithdrawalAvailable()) {
         }
 
-        $this->app->singleton(AdminReturnMessageProcessor::class, function ($app) {
-            return new AdminReturnMessageProcessor(
-                $app->make(PersistProcessor::class),
-                $app->make(RMARepository::class),
-                $app->make(RMAMessageRepository::class),
-            );
-        });
+        if ($this->isRmaAvailable()) {
+            $this->app->singleton(AdminReturnMessageProcessor::class, function ($app) {
+                return new AdminReturnMessageProcessor(
+                    $app->make(PersistProcessor::class),
+                    $app->make(RMARepository::class),
+                    $app->make(RMAMessageRepository::class),
+                );
+            });
 
-        $this->app->singleton(AdminRmaReasonProcessor::class, function ($app) {
-            return new AdminRmaReasonProcessor(
-                $app->make(PersistProcessor::class),
-                $app->make(RMAReasonRepository::class),
-                $app->make(RMAReasonResolutionRepository::class),
-            );
-        });
+            $this->app->singleton(AdminRmaReasonProcessor::class, function ($app) {
+                return new AdminRmaReasonProcessor(
+                    $app->make(PersistProcessor::class),
+                    $app->make(RMAReasonRepository::class),
+                    $app->make(RMAReasonResolutionRepository::class),
+                );
+            });
 
-        $this->app->singleton(AdminRmaStatusProcessor::class, function ($app) {
-            return new AdminRmaStatusProcessor(
-                $app->make(PersistProcessor::class),
-                $app->make(RMAStatusRepository::class),
-            );
-        });
+            $this->app->singleton(AdminRmaStatusProcessor::class, function ($app) {
+                return new AdminRmaStatusProcessor(
+                    $app->make(PersistProcessor::class),
+                    $app->make(RMAStatusRepository::class),
+                );
+            });
 
-        $this->app->singleton(AdminRmaRuleProcessor::class, function ($app) {
-            return new AdminRmaRuleProcessor(
-                $app->make(PersistProcessor::class),
-                $app->make(RMARuleRepository::class),
-            );
-        });
+            $this->app->singleton(AdminRmaRuleProcessor::class, function ($app) {
+                return new AdminRmaRuleProcessor(
+                    $app->make(PersistProcessor::class),
+                    $app->make(RMARuleRepository::class),
+                );
+            });
 
-        $this->app->singleton(AdminRmaCustomFieldProcessor::class, function ($app) {
-            return new AdminRmaCustomFieldProcessor(
-                $app->make(PersistProcessor::class),
-                $app->make(RMACustomFieldRepository::class),
-                $app->make(RMACustomFieldOptionRepository::class),
-            );
-        });
+            $this->app->singleton(AdminRmaCustomFieldProcessor::class, function ($app) {
+                return new AdminRmaCustomFieldProcessor(
+                    $app->make(PersistProcessor::class),
+                    $app->make(RMACustomFieldRepository::class),
+                    $app->make(RMACustomFieldOptionRepository::class),
+                );
+            });
 
-        if ($this->isEuWithdrawalAvailable()) {
+            if ($this->isEuWithdrawalAvailable()) {
+            }
+
+            $this->app->singleton(AdminReturnProcessor::class, function ($app) {
+                return new AdminReturnProcessor(
+                    $app->make(PersistProcessor::class),
+                    $app->make(RMARepository::class),
+                    $app->make(RMAItemRepository::class),
+                    $app->make(RMAImageRepository::class),
+                    $app->make(RMAMessageRepository::class),
+                    $app->make(RMAAdditionalFieldRepository::class),
+                    $app->make(RMAStatusRepository::class),
+                    $app->make(OrderItemRepository::class),
+                    $app->make(OrderRepository::class),
+                    $app->make(RefundRepository::class),
+                );
+            });
         }
-
-        $this->app->singleton(AdminReturnProcessor::class, function ($app) {
-            return new AdminReturnProcessor(
-                $app->make(PersistProcessor::class),
-                $app->make(RMARepository::class),
-                $app->make(RMAItemRepository::class),
-                $app->make(RMAImageRepository::class),
-                $app->make(RMAMessageRepository::class),
-                $app->make(RMAAdditionalFieldRepository::class),
-                $app->make(RMAStatusRepository::class),
-                $app->make(OrderItemRepository::class),
-                $app->make(OrderRepository::class),
-                $app->make(RefundRepository::class),
-            );
-        });
         if ($this->isEuWithdrawalAvailable()) {
         }
 
@@ -524,19 +526,22 @@ class BagistoApiServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton(CustomerReturnProcessor::class, function ($app) {
-            return new CustomerReturnProcessor(
-                $app->make(PersistProcessor::class),
-                $app->make(RMARepository::class),
-                $app->make(RMAItemRepository::class),
-                $app->make(RMAImageRepository::class),
-                $app->make(RMAMessageRepository::class),
-                $app->make(Helper::class),
-                $app->make(OrderRepository::class),
-                $app->make(RMACustomFieldRepository::class),
-                $app->make(RMAAdditionalFieldRepository::class),
-            );
-        });
+        if ($this->isRmaAvailable()) {
+            $this->app->singleton(CustomerReturnProcessor::class, function ($app) {
+                return new CustomerReturnProcessor(
+                    $app->make(PersistProcessor::class),
+                    $app->make(RMARepository::class),
+                    $app->make(RMAItemRepository::class),
+                    $app->make(RMAImageRepository::class),
+                    $app->make(RMAMessageRepository::class),
+                    $app->make(Helper::class),
+                    $app->make(OrderRepository::class),
+                    $app->make(RMACustomFieldRepository::class),
+                    $app->make(RMAAdditionalFieldRepository::class),
+                );
+            });
+        }
+
 
         if ($this->isEuWithdrawalAvailable()) {
             $this->app->singleton(EuWithdrawalProcessor::class, function ($app) {
@@ -548,13 +553,16 @@ class BagistoApiServiceProvider extends ServiceProvider
             });
         }
 
-        $this->app->singleton(CustomerReturnMessageProcessor::class, function ($app) {
-            return new CustomerReturnMessageProcessor(
-                $app->make(PersistProcessor::class),
-                $app->make(RMARepository::class),
-                $app->make(RMAMessageRepository::class),
-            );
-        });
+        if ($this->isRmaAvailable()) {
+            $this->app->singleton(CustomerReturnMessageProcessor::class, function ($app) {
+                return new CustomerReturnMessageProcessor(
+                    $app->make(PersistProcessor::class),
+                    $app->make(RMARepository::class),
+                    $app->make(RMAMessageRepository::class),
+                );
+            });
+        }
+
 
         $this->app->singleton(LogoutProcessor::class, function ($app) {
             return new LogoutProcessor;
@@ -952,6 +960,11 @@ class BagistoApiServiceProvider extends ServiceProvider
     {
         if ($this->app->bound('api_platform.metadata_factory')) {
         }
+    }
+
+    protected function isRmaAvailable(): bool
+    {
+        return class_exists(RMARepository::class);
     }
 
     protected function isEuWithdrawalAvailable(): bool
