@@ -34,6 +34,13 @@ final class PathGatedResourceNameCollectionFactory implements ResourceNameCollec
 
     private function shouldEnumerate(): bool
     {
+        // Composer package discovery only builds Laravel's provider manifest.
+        // Enumerating API Platform resources here can trigger Eloquent schema
+        // introspection before a database is available in an image build.
+        if ($this->isPackageDiscovery()) {
+            return false;
+        }
+
         // route:cache / warm-cache / route:list must see every resource.
         if (app()->runningInConsole()) {
             return true;
@@ -48,4 +55,14 @@ final class PathGatedResourceNameCollectionFactory implements ResourceNameCollec
 
         return $path === 'api' || str_starts_with($path, 'api/');
     }
+
+    private function isPackageDiscovery(): bool
+    {
+        if (! app()->runningInConsole()) {
+            return false;
+        }
+
+        return in_array('package:discover', $_SERVER['argv'] ?? [], true);
+    }
+
 }
