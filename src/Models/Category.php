@@ -136,7 +136,19 @@ use Webkul\Category\Models\Category as BaseCategory;
 )]
 class Category extends BaseCategory
 {
-    protected $appends = ['logo_url', 'banner_url', 'url', 'min_price', 'max_price'];
+    protected $appends = [
+        'logo_url',
+        'banner_url',
+        'url',
+        'min_price',
+        'max_price',
+        'localized_name',
+        'localized_slug',
+        'localized_url_path',
+        'localized_description',
+        'localized_meta_title',
+        'localized_meta_description',
+    ];
 
     private ?array $categoryPriceRange = null;
 
@@ -193,37 +205,37 @@ class Category extends BaseCategory
     }
 
     #[ApiProperty(description: 'Current locale category name')]
-    public function getLocalizedName(): ?string
+    public function getLocalizedNameAttribute(): ?string
     {
         return $this->localizedTranslation()?->name;
     }
 
     #[ApiProperty(description: 'Current locale category slug')]
-    public function getLocalizedSlug(): ?string
+    public function getLocalizedSlugAttribute(): ?string
     {
         return $this->localizedTranslation()?->slug;
     }
 
     #[ApiProperty(description: 'Current locale category URL path')]
-    public function getLocalizedUrlPath(): ?string
+    public function getLocalizedUrlPathAttribute(): ?string
     {
         return $this->localizedTranslation()?->url_path;
     }
 
     #[ApiProperty(description: 'Current locale category description')]
-    public function getLocalizedDescription(): ?string
+    public function getLocalizedDescriptionAttribute(): ?string
     {
         return $this->localizedTranslation()?->description;
     }
 
     #[ApiProperty(description: 'Current locale category meta title')]
-    public function getLocalizedMetaTitle(): ?string
+    public function getLocalizedMetaTitleAttribute(): ?string
     {
         return $this->localizedTranslation()?->meta_title;
     }
 
     #[ApiProperty(description: 'Current locale category meta description')]
-    public function getLocalizedMetaDescription(): ?string
+    public function getLocalizedMetaDescriptionAttribute(): ?string
     {
         return $this->localizedTranslation()?->meta_description;
     }
