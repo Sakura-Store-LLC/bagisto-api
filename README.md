@@ -29,6 +29,16 @@ Upgrading Bagisto is what moves the theme endpoints — the package itself needs
 php artisan bagisto-api-platform:optimize
 ```
 
+## Sakura compatibility layer
+
+This fork remains based on upstream `v2.4.4` and keeps the default full API behavior unchanged. Sakura-specific compatibility is opt-in:
+
+- RMA and EU Withdrawal bindings are registered only when those Bagisto modules exist.
+- `bagistoapi.storefront_only=true` disables Admin API integration for an isolated storefront proof of concept and limits package-owned migrations to the storefront-key table.
+- Console bootstrap skips API resource metadata for commands that do not need API schema or routes, so package discovery, migrations, queues, and schedulers do not require catalog tables to be queryable during bootstrap.
+
+The compatibility mode is intended to stay small and removable. Product and Category exposure for the Sakura proof of concept is further constrained by the host application's resource decorator.
+
 ## Installation
 
 ### Method 1: Quick Start (Composer Installation – Recommended)
