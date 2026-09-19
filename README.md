@@ -34,7 +34,7 @@ php artisan bagisto-api-platform:optimize
 This fork remains based on upstream `v2.4.4` and keeps the default full API behavior unchanged. Sakura-specific compatibility is opt-in:
 
 - RMA and EU Withdrawal bindings are registered only when those Bagisto modules exist.
-- `bagistoapi.storefront_only=true` disables Admin API integration for an isolated storefront proof of concept and limits package-owned migrations to the storefront-key table.
+- `bagistoapi.storefront_only=true` disables Admin API integration for an isolated storefront proof of concept and limits package-owned migrations to the storefront-key and guest Cart-token tables required by the published storefront authentication/Cart identity boundary.
 - Category resources expose explicit current-locale scalar metadata (`localizedName`, `localizedSlug`, `localizedUrlPath`, `localizedDescription`, `localizedMetaTitle`, `localizedMetaDescription`) so headless clients do not depend on an untyped translation relation.
 - Console bootstrap skips API resource metadata for commands that do not need API schema or routes, so package discovery, migrations, queues, and schedulers do not require catalog tables to be queryable during bootstrap.
 
